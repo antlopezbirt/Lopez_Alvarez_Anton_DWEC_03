@@ -11,45 +11,42 @@ var turno = 0;
 var jugadaGanadora;
 
 function comprobarVictoria(puntero) {
-
+    // Buscamos la existencia de una jugada ganadora comparando los arrays (por valor).
+    let tresEnRaya = JSON.stringify([puntero, puntero, puntero]);
     switch (true) {
-        case (JSON.stringify(casillero[0]) === JSON.stringify([puntero, puntero, puntero])):
+        // Primera fila
+        case (JSON.stringify(casillero[0]) === tresEnRaya):
             jugadaGanadora = [0, 1, 2];
             return true;
-        case (JSON.stringify(casillero[1]) === JSON.stringify([puntero, puntero, puntero])):
+        // Segunda fila
+        case (JSON.stringify(casillero[1]) === tresEnRaya):
             jugadaGanadora = [3, 4, 5];
             return true;
-        case (JSON.stringify(casillero[2]) === JSON.stringify([puntero, puntero, puntero])):
+        // Tercera fila
+        case (JSON.stringify(casillero[2]) === tresEnRaya):
             jugadaGanadora = [6, 7, 8];
             return true;
-        case (JSON.stringify([casillero[0][0], casillero[1][0], casillero[2][0]]) === JSON.stringify([puntero, puntero, puntero])):
+        // Primera columna
+        case (JSON.stringify([casillero[0][0], casillero[1][0], casillero[2][0]]) === tresEnRaya):
             jugadaGanadora = [0, 3, 6];
             return true;
-        case (JSON.stringify([casillero[0][1], casillero[1][1], casillero[2][1]]) === JSON.stringify([puntero, puntero, puntero])):
+        // Segunda columna
+        case (JSON.stringify([casillero[0][1], casillero[1][1], casillero[2][1]]) === tresEnRaya):
             jugadaGanadora = [1, 4, 7];
             return true;
-        case (JSON.stringify([casillero[0][2], casillero[1][2], casillero[2][2]]) === JSON.stringify([puntero, puntero, puntero])):
+        // Tercera columna
+        case (JSON.stringify([casillero[0][2], casillero[1][2], casillero[2][2]]) === tresEnRaya):
             jugadaGanadora = [2, 5, 8];
             return true;
-        case (JSON.stringify([casillero[0][0], casillero[1][1], casillero[2][2]]) === JSON.stringify([puntero, puntero, puntero])):
+        // Primera diagonal
+        case (JSON.stringify([casillero[0][0], casillero[1][1], casillero[2][2]]) === tresEnRaya):
             jugadaGanadora = [0, 4, 8];
             return true;
-        case (JSON.stringify([casillero[0][2], casillero[1][1], casillero[2][0]]) === JSON.stringify([puntero, puntero, puntero])):
+        // Segunda diagonal
+        case (JSON.stringify([casillero[0][2], casillero[1][1], casillero[2][0]]) === tresEnRaya):
             jugadaGanadora = [2, 4, 6];
             return true;
-
     }
-    /*if (JSON.stringify(casillero[0]) === JSON.stringify([puntero, puntero, puntero]) || 
-        JSON.stringify(casillero[1]) === JSON.stringify([puntero, puntero, puntero]) ||
-        JSON.stringify(casillero[2]) === JSON.stringify([puntero, puntero, puntero]) ||
-        JSON.stringify([casillero[0][0], casillero[1][0], casillero[2][0]]) === JSON.stringify([puntero, puntero, puntero]) ||
-        JSON.stringify([casillero[0][1], casillero[1][1], casillero[2][1]]) === JSON.stringify([puntero, puntero, puntero]) ||
-        JSON.stringify([casillero[0][2], casillero[1][2], casillero[2][2]]) === JSON.stringify([puntero, puntero, puntero]) ||
-        JSON.stringify([casillero[0][0], casillero[1][1], casillero[2][2]]) === JSON.stringify([puntero, puntero, puntero]) ||
-        JSON.stringify([casillero[0][2], casillero[1][1], casillero[2][0]]) === JSON.stringify([puntero, puntero, puntero])
-    ) {
-        return true;
-    }*/
     return false;
 }
 
