@@ -12,15 +12,98 @@ html {
 
 .casilla {
   display: flex;
-  border: 2px solid black;
+  border: 4px solid black;
   width: 100px;
   height: 100px;
   align-items: center;
   justify-content: center;
   padding: 5px 0;
-  font-size: 4rem;
 }
 
-#0 {
-  background: red;
+#cas0, #cas1, #cas2 {
+  border-top: 0;
+}
+
+#cas0, #cas3, #cas6 {
+  border-left: 0;
+}
+
+#cas2, #cas5, #cas8 {
+  border-right: 0;
+}
+
+#cas6, #cas7, #cas8 {
+  border-bottom: 0;
+}
+
+.circulo {
+  /*
+    Un poco frikada... Para que la cruz y el círculo sean igual de altos y anchos
+    he calculado las dimensiones del círculo basándome en la longitud del aspa de
+    la cruz, que al proyectarse sobre la verticual (hipotenusa), sería más corta.
+    En resumen, tirando de fórmula, se calcula mediante el coseno del ángulo (45º)
+    por la hipotenusa (longitud del aspa).
+  */
+  width: calc(75px * cos(45deg)); 
+  height: calc(75px * cos(45deg));
+  border: 8px solid black;
+  border-radius: 100%;
+}
+
+.cruz {
+  width: 75px;
+  height: 0;
+  position: absolute;
+  border: 4px solid black;
+  rotate: 45deg;
+  border-radius: 4px;
+}
+
+.cruz:after {
+  content: "";
+  position: absolute;
+  width: 75px;
+  height: 0;
+  border: 4px solid black;
+  border-radius: 4px;
+  rotate: 90deg;
+  translate: -4px -4px;
+}
+
+/* Javascript no puede seleccionar seudoelementos, por lo que tengo que duplicar
+las clases con otro nombre para cambiarle el color a las fichas ganadoras */
+
+.circuloverde {
+  width: calc(75px * cos(45deg)); 
+  height: calc(75px * cos(45deg));
+  border: 8px solid green;
+  border-radius: 100%;
+}
+
+.cruzverde {
+  width: 75px;
+  height: 0;
+  position: absolute;
+  border: 4px solid green;
+  rotate: 45deg;
+  border-radius: 4px;
+}
+
+.cruzverde:after {
+  content: "";
+  position: absolute;
+  width: 75px;
+  height: 0;
+  border: 4px solid green;
+  border-radius: 4px;
+  rotate: 90deg;
+  translate: -4px -4px;
+}
+
+#resultado, #opciones {
+  text-align: center;
+}
+
+#opciones {
+  visibility: hidden;
 }

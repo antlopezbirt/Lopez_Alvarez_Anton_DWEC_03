@@ -1,6 +1,6 @@
 'use strict'
 
-var puntero = "X";
+var puntero = "cruz";
 var casillero = [
     [0, 0, 0],
     [0, 0, 0],
@@ -8,64 +8,98 @@ var casillero = [
 ]
 var terminado = false;
 var turno = 0;
+var jugadaGanadora;
 
 function comprobarVictoria(puntero) {
-    if (JSON.stringify(casillero[0]) === JSON.stringify([puntero, puntero, puntero]) || 
+
+    switch (true) {
+        case (JSON.stringify(casillero[0]) === JSON.stringify([puntero, puntero, puntero])):
+            jugadaGanadora = [0, 1, 2];
+            return true;
+        case (JSON.stringify(casillero[1]) === JSON.stringify([puntero, puntero, puntero])):
+            jugadaGanadora = [3, 4, 5];
+            return true;
+        case (JSON.stringify(casillero[2]) === JSON.stringify([puntero, puntero, puntero])):
+            jugadaGanadora = [6, 7, 8];
+            return true;
+        case (JSON.stringify([casillero[0][0], casillero[1][0], casillero[2][0]]) === JSON.stringify([puntero, puntero, puntero])):
+            jugadaGanadora = [0, 3, 6];
+            return true;
+        case (JSON.stringify([casillero[0][1], casillero[1][1], casillero[2][1]]) === JSON.stringify([puntero, puntero, puntero])):
+            jugadaGanadora = [1, 4, 7];
+            return true;
+        case (JSON.stringify([casillero[0][2], casillero[1][2], casillero[2][2]]) === JSON.stringify([puntero, puntero, puntero])):
+            jugadaGanadora = [2, 5, 8];
+            return true;
+        case (JSON.stringify([casillero[0][0], casillero[1][1], casillero[2][2]]) === JSON.stringify([puntero, puntero, puntero])):
+            jugadaGanadora = [0, 4, 8];
+            return true;
+        case (JSON.stringify([casillero[0][2], casillero[1][1], casillero[2][0]]) === JSON.stringify([puntero, puntero, puntero])):
+            jugadaGanadora = [2, 4, 6];
+            return true;
+
+    }
+    /*if (JSON.stringify(casillero[0]) === JSON.stringify([puntero, puntero, puntero]) || 
         JSON.stringify(casillero[1]) === JSON.stringify([puntero, puntero, puntero]) ||
         JSON.stringify(casillero[2]) === JSON.stringify([puntero, puntero, puntero]) ||
         JSON.stringify([casillero[0][0], casillero[1][0], casillero[2][0]]) === JSON.stringify([puntero, puntero, puntero]) ||
         JSON.stringify([casillero[0][1], casillero[1][1], casillero[2][1]]) === JSON.stringify([puntero, puntero, puntero]) ||
         JSON.stringify([casillero[0][2], casillero[1][2], casillero[2][2]]) === JSON.stringify([puntero, puntero, puntero]) ||
         JSON.stringify([casillero[0][0], casillero[1][1], casillero[2][2]]) === JSON.stringify([puntero, puntero, puntero]) ||
-        JSON.stringify([casillero[0][2], casillero[1][1], casillero[2][0]]) === JSON.stringify([puntero, puntero, puntero])    
+        JSON.stringify([casillero[0][2], casillero[1][1], casillero[2][0]]) === JSON.stringify([puntero, puntero, puntero])
     ) {
         return true;
-    }
+    }*/
     return false;
 }
 
 function pulsar(casilla)  {
-    let casillaValida = false;
     if (terminado === false) {
-        let fila = Math.trunc(parseInt(casilla.id) / 3);
-        let columna = parseInt(casilla.id) % 3;
-        //console.log('Fila: ' + fila);
-        //console.log('Columna: ' + columna);
+        let fila = Math.trunc(parseInt(casilla.id.charAt(3)) / 3);
+        let columna = parseInt(casilla.id.charAt(3)) % 3;
+        console.log('Fila: ' + fila);
+        console.log('Columna: ' + columna);
         
         if (casillero[fila][columna] === 0) {
-            casillaValida = true;
             casillero[fila][columna] = puntero;
-            casilla.innerText = puntero;
+            casilla.innerHTML = '<div id="ficha' + casilla.id.charAt(3) + '" class="' + puntero + '"></div>';
 
             if (comprobarVictoria(puntero) === false) {
-                puntero = (puntero === "X") ? "O" : "X";
+                puntero = (puntero === "cruz") ? "circulo" : "cruz";
                 
             } else {
                 terminado = true;
+                for (let id of jugadaGanadora) {
+                    console.log('ID casilla: ', id);
+                    document.getElementById('ficha' + id).className = puntero + 'verde';
+                    console.log(document.getElementById('ficha' + id).className);
+                }
+
                 document.getElementById('resultado').innerText = '¡¡Gana el jugador ' + puntero + '!!';
+                document.getElementById('opciones').style.visibility = "visible";
             }
 
             turno++;
             //console.log(turno);
 
-            if (turno === 9) {
-                document.getElementById('resultado').innerText = '¡¡Empate!! ¿Quieres volver a jugar?';
-            } else if (puntero === "O" && terminado === false) { // Turno del ordenador, si el tablero no está lleno
+            if (turno === 9 && terminado === false) {
+                document.getElementById('resultado').innerHTML = '<p>¡¡Empate!! ¿Quieres volver a jugar?</p>';
+                document.getElementById('opciones').style.visibility = "visible";
+                terminado = true;
+            } else if (puntero === "circulo" && terminado === false) { // Turno del ordenador, si el tablero no está lleno
 
                 let seleccionPC;
                 do {
                     seleccionPC = Math.floor(Math.random()*9);
-                    //console.log(seleccionPC);
-                } while (pulsar(document.getElementById(seleccionPC)) === false);
+                    console.log(seleccionPC);
+                } while (pulsar(document.getElementById('cas' + seleccionPC)) === false);
             }
 
             return true;
         }
-
         else return false;
     }
-    return casillaValida;
-    
+    return false;
 }
 
 
@@ -78,3 +112,30 @@ for (let casilla of casillas) {
         pulsar(casilla);
     });
 }
+
+var btnJugar = document.querySelector('#jugar');
+var btnSalir = document.querySelector('#salir');
+
+btnJugar.addEventListener("click", function() {
+    //window.location.reload(); // opcion facil
+
+    puntero = "cruz";
+    casillero = [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+    ]
+    terminado = false;
+    turno = 0;
+
+    for (let i = 0; i < 9; i++) document.querySelector('#cas' + i).innerHTML = '';
+    document.getElementById('resultado').innerHTML = '';
+    document.getElementById('opciones').style.visibility = "hidden";
+
+
+    /*for (let cas of casillero) {
+        console.log('cas' + cas);
+        document.getElementById('cas' + cas).innerHTML = '';
+    }*/
+
+});
