@@ -20,19 +20,19 @@ html {
   padding: 5px 0;
 }
 
-#cas0, #cas1, #cas2 {
+#cas00, #cas01, #cas02 {
   border-top: 0;
 }
 
-#cas0, #cas3, #cas6 {
+#cas00, #cas10, #cas20 {
   border-left: 0;
 }
 
-#cas2, #cas5, #cas8 {
+#cas02, #cas12, #cas22 {
   border-right: 0;
 }
 
-#cas6, #cas7, #cas8 {
+#cas20, #cas21, #cas22 {
   border-bottom: 0;
 }
 
@@ -43,6 +43,8 @@ html {
     la cruz, que al proyectarse sobre la verticual (hipotenusa), sería más corta.
     En resumen, tirando de fórmula, se calcula mediante el coseno del ángulo (45º)
     por la hipotenusa (longitud del aspa).
+
+    https://www.disfrutalasmatematicas.com/seno-coseno-tangente.html
   */
   width: calc(75px * cos(45deg)); 
   height: calc(75px * cos(45deg));
