@@ -128,6 +128,54 @@ for (let casilla of casillas) {
     });
 }
 
+
+var fichaX = document.getElementById('fichasX');
+var fichaO = document.getElementById('fichasO');
+
+document.getElementById('fichasX').addEventListener('mousedown', function() {
+    moverFicha(fichaX);
+});
+document.getElementById('fichasO').addEventListener('mousedown', function() {
+    moverFicha(fichaO);
+});
+
+function moverFicha(ficha) {
+    console.log("Activado evento");
+
+    // (1) prepare to moving: make absolute and on top by z-index
+    ficha.style.position = 'absolute';
+    ficha.style.zIndex = 1000;
+
+    // move it out of any current parents directly into body
+    // to make it positioned relative to the body
+    document.body.append(ficha);
+
+    // centers the ball at (pageX, pageY) coordinates
+    function moveAt(pageX, pageY) {
+        ficha.style.left = pageX - ficha.offsetWidth / 2 + 'px';
+        ficha.style.top = pageY - ficha.offsetHeight / 2 + 'px';
+    }
+
+    // move our absolutely positioned ball under the pointer
+    moveAt(event.pageX, event.pageY);
+
+    function onMouseMove(event) {
+        moveAt(event.pageX, event.pageY);
+    }
+
+    // (2) move the ball on mousemove
+    document.addEventListener('mousemove', onMouseMove);
+
+    // (3) drop the ball, remove unneeded handlers
+    ficha.onmouseup = function() {
+        document.removeEventListener('mousemove', onMouseMove);
+        ficha.onmouseup = null;
+    };
+}
+
+
+
+
 var btnJugar = document.querySelector('#jugar');
 var btnSalir = document.querySelector('#salir');
 

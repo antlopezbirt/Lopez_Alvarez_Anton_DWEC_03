@@ -1,8 +1,17 @@
+:root {
+  --color-fondo: #242424;
+  --color-azul: #0064FB;
+  --color-rojo: #FF3232;
+  --color-rojo-claro: #FFE5E5;
+  --color-blanco: #fff;
+}
+
 html {
   box-sizing: border-box;
-  background: #242424;
+  background: var(--color-fondo);
   font-size: 62.25%;
   font-family: Roboto, 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  color: var(--color-blanco);
 }
 
 header {
@@ -11,17 +20,31 @@ header {
 }
 
 main {
-  margin-top: 7rem;
-  font-size: 3rem;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 2.4rem;
+  justify-content: center;
+  text-align: center;
+}
+
+p {
+  margin-block-start: 1rem;
+  margin-block-end: 1rem;
+}
+
+form {
+  margin-top: 5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-form {
+fieldset {
+  border: 0;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-items: center;
 }
 
 input {
@@ -37,67 +60,108 @@ button {
   font-size: 2.4rem;
   width: 33rem;
   height: 5rem;
-  background-color: #242424;
+  background-color: var(--color-fondo);
   border-radius: 1rem;
-  border: white solid .4rem;
-  color: white;
+  border: var(--color-blanco) solid .4rem;
+  color: var(--color-blanco);
   transition: .2s ease-in-out;
-  margin-top: 2rem;
+  margin: 2rem 0;
 }
 
-button:hover {
-  background-color: #0064FB;
-  border: #0064FB solid .4rem;
-  color: white;
+button:hover, .boton--seleccionado {
+  background-color: var(--color-azul);
+  border-color: var(--color-azul);
 }
 
-#txtErrorLogin {
+.botonizq {
+  border-right: 0;
+  border-radius: 1rem 0 0 1rem;
+  width: 17.5rem;
+  display: inline-block;
+}
+
+.botoncentro {
+  border-right: 0;
+  border-left: 0;
+  border-radius: 0;
+  width: 17.5rem;
+  display: inline-block;
+}
+
+.botondch {
+  border-left: 0;
+  border-radius: 0 1rem 1rem 0;
+  width: 17.5rem;
+  display: inline-block;
+}
+
+#btnJugar {
+  width: initial;
+  padding: 0 4rem;
+}
+
+span {
   margin-top: 4rem;
   margin-bottom: 4rem;
-  border: #FF3232 solid .3rem;
+  border: var(--color-rojo) solid .3rem;
   border-radius: 1rem;
-  background-color: #FFE5E5;
-  color: #FF3232;
+  background-color: var(--color-rojo-claro);
+  color: var(--color-rojo);
   font-size: 2.4rem;
   width: 40rem;
   height: 5rem;
-  display: flex;
   align-items: center;
   justify-content: center;
+  display: none;
+}
+
+.visible {
+  display: flex;
+}
+
+
+/* TABLERO DE JUEGO */
+
+#areaJuego {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  /* width: 70%; */
+  margin: 5rem 0;
+}
+
+#areaFichasX, #areaFichasO {
+  width: 100%;
+  display: flex;
+  align-items: end;
+}
+
+#areaFichasO {
+  justify-content:right;
+}
+
+.ficha {
+  border: .4rem solid #aaa;
+  border-radius: .8rem;
+  box-shadow: .4rem .4rem #aaa;
 }
 
 #tablero {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-
-  max-width: 300px;
-  margin: 50px auto;
+  column-gap: 2rem;
+  row-gap: 2rem;
+  background-color: var(--color-blanco);
+  justify-content: space-around;
+  justify-items: center;
 }
 
 .casilla {
   display: flex;
-  border: 4px solid black;
-  width: 100px;
-  height: 100px;
+  width: 10rem;
+  height: 10rem;
   align-items: center;
   justify-content: center;
-  padding: 5px 0;
-}
-
-#cas00, #cas01, #cas02 {
-  border-top: 0;
-}
-
-#cas00, #cas10, #cas20 {
-  border-left: 0;
-}
-
-#cas02, #cas12, #cas22 {
-  border-right: 0;
-}
-
-#cas20, #cas21, #cas22 {
-  border-bottom: 0;
+  background-color: var(--color-fondo);
 }
 
 .circulo {
@@ -110,64 +174,64 @@ button:hover {
 
     https://www.disfrutalasmatematicas.com/seno-coseno-tangente.html
   */
-  width: calc(75px * cos(45deg)); 
-  height: calc(75px * cos(45deg));
-  border: 8px solid black;
+  width: calc(7.5rem * cos(45deg)); 
+  height: calc(7.5rem * cos(45deg));
+  border: .8rem solid var(--color-blanco);
   border-radius: 100%;
 }
 
 .cruz {
-  width: 75px;
+  width: 7.5rem;
   height: 0;
   position: absolute;
-  border: 4px solid black;
-  background: black; /* Sin el background se ve una rayita en Firefox */
+  border: .4rem solid var(--color-blanco);
+  background: var(--color-blanco); /* Sin el background se ve una rayita en Firefox */
   rotate: 45deg;
-  border-radius: 4px;
+  border-radius: .4rem;
 }
 
 .cruz:after {
   content: "";
   position: absolute;
-  width: 75px;
+  width: 7.5rem;
   height: 0;
-  border: 4px solid black;
-  background: black;
-  border-radius: 4px;
+  border: .4rem solid var(--color-blanco);
+  background: var(--color-blanco);
+  border-radius: .4rem;
   rotate: 90deg;
-  translate: -4px -4px;
+  translate: -4.125rem -0.38rem;
 }
 
 /* Javascript no puede seleccionar seudoelementos, por lo que tengo que duplicar
 las clases con otro nombre para cambiarle el color a las fichas ganadoras */
 
 .circuloverde {
-  width: calc(75px * cos(45deg)); 
-  height: calc(75px * cos(45deg));
-  border: 8px solid green;
+  width: calc(7.5rem * cos(45deg)); 
+  height: calc(7.5rem * cos(45deg));
+  border: .8rem solid green;
   border-radius: 100%;
 }
 
 .cruzverde {
-  width: 75px;
+  width: 7.5rem;
   height: 0;
   position: absolute;
-  border: 4px solid green;
+  border: .4rem solid green;
   background: green;
   rotate: 45deg;
-  border-radius: 4px;
+  border-radius: .4rem;
 }
 
 .cruzverde:after {
   content: "";
   position: absolute;
-  width: 75px;
+  width: 7.5rem;
   height: 0;
-  border: 4px solid green;
+  border: .4rem solid green;
   background: green;
-  border-radius: 4px;
+  border-radius: .4rem;
   rotate: 90deg;
-  translate: -4px -4px;
+  translate: -4.125rem -0.38rem;
 }
 
 #resultado, #opciones {

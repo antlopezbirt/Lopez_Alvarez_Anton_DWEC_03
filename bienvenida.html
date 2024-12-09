@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="css/styles.css">
+  <title>Bienvenida</title>
+</head>
+<body>
+  <header>
+    <img src="svg/logo.svg">
+  </header>
+
+  <main id="mainBienvenida" name="mainBienvenida">
+    <p>¡Te damos la bienvenida a nuestro juego de tres en raya!</p>
+    <p>Para ganar tendrás que arrastrar y colocar tres figuras en raya.<br>
+      ¡Pero cuidado!, el tiempo de los turnos es limitado.<br>
+      A mayor dificultad, menos tiempo para pensar...</p>
+    <p>¿Qué nivel quieres elegir?</p>
+
+    <fieldset id="btnrNiveles" name="btnrNiveles">
+      <button id="btnPrincipiante" name="btnPrincipiante" class="botonizq" value="0">Principiante</button>
+      <button id="btnIntermedio" name="btnIntermedio" class="botoncentro boton--seleccionado" value="1">Intermedio</button>
+      <button id="btnAvanzado" name="btnAvanzado" class="botondch" value="2">Avanzado</button>
+    </fieldset>
+
+    <p>¿Quieres jugar a solas, en compañía, o ver cómo juega la máquina?</p>
+
+    <fieldset id="btnrModos" name="btnrModos">
+      <button id="btnAutomatico" name="btnAutomatico" class="botonizq" value="0">Automático</button>
+      <button id="btn1Jugador" name="btn1Jugador" class="botoncentro boton--seleccionado" value="1">1 jugador</button>
+      <button id="btn2Jugadores" name="btn2Jugadores" class="botondch" value="2">2 jugadores</button>
+    </fieldset>
+
+    <button id="btnJugar" name="btnJugar">Jugar</button>
+  </main>
+  <script type="module" src="js/bienvenida.js"></script>
+</body>
+</html>

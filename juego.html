@@ -5,22 +5,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" type="text/css" href="css/styles.css">
   
-  <title>Document</title>
+  <title>Juego</title>
 </head>
 <body>
-  <div id="tablero">
-    <div id="cas00" class="casilla"></div><div id="cas01" class="casilla"></div><div id="cas02" class="casilla"></div>
-    <div id="cas10" class="casilla"></div><div id="cas11" class="casilla"></div><div id="cas12" class="casilla"></div>
-    <div id="cas20" class="casilla"></div><div id="cas21" class="casilla"></div><div id="cas22" class="casilla"></div>
-  </div>
-  <div id="resultado">
-  </div>
-  <div id="opciones">
+  <header>
+    <img src="svg/logo.svg">
+  </header>
+  <main id="mainJuego" name="mainJuego">
 
-      <button id="salir">Salir</button>
-      <button id="jugar">Volver a jugar</button>
+    <div id="areaJuego">
 
-  </div>
-  <script type="text/javascript" src="js/script.js"></script>
+      <div id="areaFichasX"><div id="fichasX" class="casilla ficha"><div class="cruz"></div></div></div>
+
+      <div id="tablero" name="tablero">
+        <div id="cas00" class="casilla"></div><div id="cas01" class="casilla"></div><div id="cas02" class="casilla"></div>
+        <div id="cas10" class="casilla"></div><div id="cas11" class="casilla"></div><div id="cas12" class="casilla"></div>
+        <div id="cas20" class="casilla"></div><div id="cas21" class="casilla"></div><div id="cas22" class="casilla"></div>
+      </div>
+
+      <div id="areaFichasO"><div id="fichasO" class="casilla ficha"><div class="circulo"></div></div></div>
+
+    </div>
+    
+    <div id="resultado">
+    </div>
+    <div id="opciones">
+  
+        <button id="salir">Salir</button>
+        <button id="jugar">Volver a jugar</button>
+  
+    </div>
+
+  </main>
+  
+  <script type="text/javascript" src="js/juego.js"></script>
 </body>
 </html>

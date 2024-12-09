@@ -31,7 +31,7 @@ async function cargarDatosUsuarios() {
         usuariosJSON = await cargarJSON(usuariosJSONpath);
 
         Object.entries(usuariosJSON).forEach(function([clave, valor]) {
-            localStorage.setItem(clave, JSON.stringify(valor));
+            localStorage.setItem('user'+clave, JSON.stringify(valor));
         });
 
     } catch (error) {
@@ -54,21 +54,25 @@ function chequearUsuario(event) {
     const pass = document.getElementById('txtPass').value;
 
     for (let i = 0; i <= (localStorage.length) - 1; i++) {
-        var usu = JSON.parse(localStorage.getItem(i));
-        // console.log("Usuario iterado: ", usu.usuario);
+        var usu = JSON.parse(localStorage.getItem('user' + i));
+        //console.log("Usuario iterado: ", usu.usuario);
         if (user === usu.usuario && pass === usu.contraseña) {
+            document.getElementById('txtErrorLogin').classList.remove('visible');
             console.log("Usuario identificado: ", usu.usuario);
+            localStorage.setItem('userID', usu.id);
             return true;
         }
     }
 
-    let spanErrorLogin = document.createElement("span");
+    /*let spanErrorLogin = document.createElement("span");
     spanErrorLogin.setAttribute("id", "txtErrorLogin");
     spanErrorLogin.setAttribute("name", "txtErrorLogin");
     let textoErrorLogin = document.createTextNode("Login incorrecto");
     spanErrorLogin.appendChild(textoErrorLogin);
 
-    document.getElementById('mainEntrada').appendChild(spanErrorLogin);
+    document.getElementById('mainEntrada').appendChild(spanErrorLogin);*/
+
+    document.getElementById('txtErrorLogin').classList.add('visible');
 
     return false;
 }
