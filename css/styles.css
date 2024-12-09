@@ -1,20 +1,69 @@
 html {
   box-sizing: border-box;
   background: #242424;
+  font-size: 62.25%;
+  font-family: Roboto, 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 header {
   text-align: center;
+  margin-top: 4rem;
 }
 
 main {
-
+  margin-top: 7rem;
+  font-size: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 form {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+input {
+  width: 33rem;
+  height: 5rem;
+  margin-bottom: 3rem;
+  font-size: 2.4rem;
+  border-radius: 1rem;
+  padding-left: 1rem;
+}
+
+button {
+  font-size: 2.4rem;
+  width: 33rem;
+  height: 5rem;
+  background-color: #242424;
+  border-radius: 1rem;
+  border: white solid .4rem;
+  color: white;
+  transition: .2s ease-in-out;
+  margin-top: 2rem;
+}
+
+button:hover {
+  background-color: #0064FB;
+  border: #0064FB solid .4rem;
+  color: white;
+}
+
+#txtErrorLogin {
+  margin-top: 4rem;
+  margin-bottom: 4rem;
+  border: #FF3232 solid .3rem;
+  border-radius: 1rem;
+  background-color: #FFE5E5;
+  color: #FF3232;
+  font-size: 2.4rem;
+  width: 40rem;
+  height: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #tablero {
