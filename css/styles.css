@@ -4,6 +4,7 @@
   --color-rojo: #FF3232;
   --color-rojo-claro: #FFE5E5;
   --color-blanco: #fff;
+  --color-lanzable: #60a0ff;
 }
 
 html {
@@ -143,6 +144,12 @@ span {
   border: .4rem solid #aaa;
   border-radius: .8rem;
   box-shadow: .4rem .4rem #aaa;
+  width: 10rem;
+  height: 10rem;
+  background-color: rgba(24, 24, 24, .5);
+  align-items: center;
+  justify-content: center;
+  display: flex;
 }
 
 #tablero {
@@ -162,6 +169,26 @@ span {
   align-items: center;
   justify-content: center;
   background-color: var(--color-fondo);
+}
+
+.lanzable {
+  background-color: var(--color-lanzable);
+  animation: resplandor 1s ease infinite;
+  transition: all 1s ease-in-out;
+}
+  
+/* En lugar de usar alternate he puesto un punto intermedio que hace de tope, ya que no me gustaba el timing de alternate */
+  
+@keyframes resplandor {
+  from {
+    background-color: var(--color-fondo);
+  }
+  50% {
+    background-color: var(--color-lanzable);
+}
+  to {
+    background-color: var(--color-fondo);
+  }
 }
 
 .circulo {
@@ -205,30 +232,30 @@ span {
 /* Javascript no puede seleccionar seudoelementos, por lo que tengo que duplicar
 las clases con otro nombre para cambiarle el color a las fichas ganadoras */
 
-.circuloverde {
+.circulo--final {
   width: calc(7.5rem * cos(45deg)); 
   height: calc(7.5rem * cos(45deg));
-  border: .8rem solid green;
+  border: .8rem solid var(--color-azul);
   border-radius: 100%;
 }
 
-.cruzverde {
+.cruz--final {
   width: 7.5rem;
   height: 0;
   position: absolute;
-  border: .4rem solid green;
-  background: green;
+  border: .4rem solid var(--color-azul);
+  background: var(--color-azul);
   rotate: 45deg;
   border-radius: .4rem;
 }
 
-.cruzverde:after {
+.cruz--final:after {
   content: "";
   position: absolute;
   width: 7.5rem;
   height: 0;
-  border: .4rem solid green;
-  background: green;
+  border: .4rem solid var(--color-azul);
+  background: var(--color-azul);
   border-radius: .4rem;
   rotate: 90deg;
   translate: -4.125rem -0.38rem;

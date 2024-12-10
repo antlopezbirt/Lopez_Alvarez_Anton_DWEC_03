@@ -10,6 +10,15 @@ const casillas = document.querySelectorAll("div[id^='cas']");
 var terminado = false;
 var turno = 0;
 var jugadaGanadora = [];
+var fichaX = document.getElementById('fichasX');
+var fichaO = document.getElementById('fichasO');
+
+fichaX.addEventListener('mousedown', moverFicha);
+fichaO.addEventListener('mousedown', moverFicha);
+
+let currentDroppable = null;
+let droppableBelow = null;
+let padre = null;
 
 /****************************** FUNCIONES ***********************************/
 
@@ -68,10 +77,19 @@ function comprobarVictoria(puntero) {
     return false;
 }
 
+function estaLibre(casilla) {
+    // Transformamos los valores correlativos de los ID de las casillas a valoresde filas y columnas para acceder al array del casillero
+    let fila = parseInt(casilla.id.charAt(3));
+    let columna = parseInt(casilla.id.charAt(4));
+        
+    if (casillero[fila][columna] === 0) return true;
+
+    return false;
+}
+
 function pulsar(casilla)  {
     if (terminado === false) {
         console.log(casilla.id);
-        // Transformamos los valores correlativos de los ID de las casillas a valores de filas y columnas para acceder al array del casillero
         let fila = parseInt(casilla.id.charAt(3));
         let columna = parseInt(casilla.id.charAt(4));
         
@@ -84,10 +102,15 @@ function pulsar(casilla)  {
                 
             } else {
                 terminado = true;
+
+                // Vaciamos los listeners de las fichas
+                fichaX.removeEventListener('mousedown', moverFicha);
+                fichaO.removeEventListener('mousedown', moverFicha);
+                
                 for (let id of jugadaGanadora) {
                     console.log('ID casilla: ', id);
-                    document.getElementById('ficha' + id).className = puntero + 'verde';
-                    console.log(document.getElementById('ficha' + id).className);
+                    document.getElementById('ficha' + id).className = puntero + '--final';
+                    //console.log(document.getElementById('ficha' + id).className);
                 }
 
                 document.getElementById('resultado').innerText = '¡¡Gana el jugador ' + puntero + '!!';
@@ -128,27 +151,20 @@ for (let casilla of casillas) {
     });
 }
 
+function moverFicha(event) {
 
-var fichaX = document.getElementById('fichasX');
-var fichaO = document.getElementById('fichasO');
-
-document.getElementById('fichasX').addEventListener('mousedown', function() {
-    moverFicha(fichaX);
-});
-document.getElementById('fichasO').addEventListener('mousedown', function() {
-    moverFicha(fichaO);
-});
-
-function moverFicha(ficha) {
-    console.log("Activado evento");
-
+    //console.log("Activado evento");
+    let ficha = event.target;
+    if (ficha.classList.contains('cruz') || ficha.classList.contains('circulo')) {
+        ficha = ficha.parentElement;
+    }
     // (1) prepare to moving: make absolute and on top by z-index
     ficha.style.position = 'absolute';
     ficha.style.zIndex = 1000;
 
     // move it out of any current parents directly into body
     // to make it positioned relative to the body
-    document.body.append(ficha);
+    //document.body.append(ficha);
 
     // centers the ball at (pageX, pageY) coordinates
     function moveAt(pageX, pageY) {
@@ -157,10 +173,43 @@ function moverFicha(ficha) {
     }
 
     // move our absolutely positioned ball under the pointer
-    moveAt(event.pageX, event.pageY);
+    //moveAt(event.pageX, event.pageY);
 
     function onMouseMove(event) {
         moveAt(event.pageX, event.pageY);
+        
+        ficha.style.display = 'none';
+        ficha.childNodes[0].hidden = true;
+        let elemBelow = document.elementFromPoint(event.clientX, event.clientY);
+        //console.log(elemBelow);
+        ficha.style.display = 'flex';
+        ficha.childNodes[0].hidden = false;
+
+        // mousemove events may trigger out of the window (when the ball is dragged off-screen)
+        // if clientX/clientY are out of the window, then elementFromPoint returns null
+        if (!elemBelow) return;
+
+        // potential droppables are labeled with the class "droppable" (can be other logic)
+        droppableBelow = elemBelow.closest('.casilla');
+
+        if (currentDroppable != droppableBelow) {
+            // we're flying in or out...
+            // note: both values can be null
+            //   currentDroppable=null if we were not over a droppable before this event (e.g over an empty space)
+            //   droppableBelow=null if we're not over a droppable now, during this event
+
+            if (currentDroppable) {
+                // the logic to process "flying out" of the droppable (remove highlight)
+                leaveDroppable(currentDroppable);
+            }
+
+            currentDroppable = droppableBelow;
+
+            if (currentDroppable) {
+                // the logic to process "flying in" of the droppable
+                enterDroppable(currentDroppable);
+            }
+        }
     }
 
     // (2) move the ball on mousemove
@@ -168,9 +217,22 @@ function moverFicha(ficha) {
 
     // (3) drop the ball, remove unneeded handlers
     ficha.onmouseup = function() {
+        if (currentDroppable) {
+            leaveDroppable(currentDroppable)
+            pulsar(currentDroppable);
+        }
         document.removeEventListener('mousemove', onMouseMove);
         ficha.onmouseup = null;
+        ficha.style = "";
     };
+}
+
+function enterDroppable(elem) {
+    if(estaLibre(elem)) elem.classList.toggle('lanzable');
+}
+
+function leaveDroppable(elem) {
+    elem.classList.toggle('lanzable');
 }
 
 
@@ -196,5 +258,8 @@ btnJugar.addEventListener("click", function() {
     for (let casilla of casillas) casilla.innerHTML = '';
     document.getElementById('resultado').innerHTML = '';
     document.getElementById('opciones').style.visibility = "hidden";
+
+    fichaX.addEventListener('mousedown', moverFicha);
+    fichaO.addEventListener('mousedown', moverFicha);
 
 });
