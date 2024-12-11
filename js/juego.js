@@ -1,5 +1,18 @@
 'use strict'
 
+var tiempoJuego = 99;
+var tiempoTurno = 4;
+
+const contaTurnoX = document.getElementById('contaTurnoX');
+const contaTurnoO = document.getElementById('contaTurnoO');
+const contaMovsX = document.getElementById('contaMovsX');
+const contaMovsO = document.getElementById('contaMovsO');
+
+const txtTiempoJuego = document.getElementById('tiempoJuego');
+const txtTiempoTurnoX = document.getElementById('contaTurnoX');
+const txtTiempoTurnoO = document.getElementById('contaTurnoO');
+
+
 var puntero = "cruz";
 var casillero = [
     [0, 0, 0],
@@ -8,19 +21,70 @@ var casillero = [
 ]
 const casillas = document.querySelectorAll("div[id^='cas']");
 var terminado = false;
-var turno = 0;
+var turno = null;
 var jugadaGanadora = [];
 var fichaX = document.getElementById('fichasX');
 var fichaO = document.getElementById('fichasO');
-
-fichaX.addEventListener('mousedown', moverFicha);
-fichaO.addEventListener('mousedown', moverFicha);
 
 let currentDroppable = null;
 let droppableBelow = null;
 let padre = null;
 
+
+// Inicialización
+document.addEventListener('DOMContentLoaded', () => {
+    fichaX.addEventListener('mousedown', moverFicha);
+    fichaO.addEventListener('mousedown', moverFicha);
+
+    setInterval(temporizadorJuego, 1000);
+    iniciarTurno();
+});
+
 /****************************** FUNCIONES ***********************************/
+
+function temporizadorJuego() {
+    txtTiempoJuego.innerText = tiempoJuego + 's';
+    tiempoJuego -= 1;
+}
+
+function iniciarTurno() {
+    clearInterval(turno);
+    tiempoTurno = 4;
+    // Vaciamos los listeners de las fichas del turno anterior y cambiamos el puntero
+    if (puntero === "cruz") {
+        puntero = "circulo";
+        fichaX.removeEventListener('mousedown', moverFicha);
+        contaTurnoX.classList.remove('contaTurno--activo');
+        txtTiempoTurnoX.innerText = '5';
+
+        fichaO.addEventListener('mousedown', moverFicha);
+        contaTurnoO.classList.add('contaTurno--activo');
+    } else {
+        puntero = "cruz";
+        fichaO.removeEventListener('mousedown', moverFicha);
+        contaTurnoO.classList.remove('contaTurno--activo');
+        txtTiempoTurnoO.innerText = '5';
+
+        fichaX.addEventListener('mousedown', moverFicha);
+        contaTurnoX.classList.add('contaTurno--activo');
+    }
+
+    turno = setInterval(temporizadorTurno, 1000);
+}
+
+function temporizadorTurno() {
+    if (tiempoTurno === 0) {
+        iniciarTurno();
+    }
+    else {
+        if (puntero === "cruz") {
+            txtTiempoTurnoX.innerText = tiempoTurno;
+        } else {
+            txtTiempoTurnoO.innerText = tiempoTurno;
+        }
+        tiempoTurno -=1;
+    }
+}
 
 // Función que comprueba si la última jugada ha conseguido un tres en raya.
 function comprobarVictoria(puntero) {
@@ -89,6 +153,7 @@ function estaLibre(casilla) {
 
 function pulsar(casilla)  {
     if (terminado === false) {
+        iniciarTurno();
         console.log(casilla.id);
         let fila = parseInt(casilla.id.charAt(3));
         let columna = parseInt(casilla.id.charAt(4));
