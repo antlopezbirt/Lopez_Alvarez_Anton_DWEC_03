@@ -1,7 +1,23 @@
 'use strict'
 
+let nivel = localStorage.getItem('nivel');
+let modo = localStorage.getItem('nivel');
+
 var tiempoJuego = 99;
-var tiempoTurno = 4;
+var tiempoTurno = 0;
+
+// Asignamos el tiempo del turno correspondiente al nivel seleccionado
+switch (nivel) {
+    case 0:
+        tiempoTurno = 8;
+        break;
+    case 1:
+        tiempoTurno = 4;
+        break;
+    case 2:
+        tiempoTurno = 2;
+        break;
+}
 
 const contaTurnoX = document.getElementById('contaTurnoX');
 const contaTurnoO = document.getElementById('contaTurnoO');
@@ -12,19 +28,27 @@ const txtTiempoJuego = document.getElementById('tiempoJuego');
 const txtTiempoTurnoX = document.getElementById('contaTurnoX');
 const txtTiempoTurnoO = document.getElementById('contaTurnoO');
 
-
-var puntero = "cruz";
+var puntero = "circulo";
 var casillero = [
     [0, 0, 0],
     [0, 0, 0],
     [0, 0, 0]
 ]
 const casillas = document.querySelectorAll("div[id^='cas']");
+
 var terminado = false;
-var turno = null;
+var turno = 0;
+var contaTurno = null
+var contaJuego = null;
+var miTurno = null;
+let movsX = 0;
+let movsO = 0;
+
 var jugadaGanadora = [];
 var fichaX = document.getElementById('fichasX');
 var fichaO = document.getElementById('fichasO');
+
+const eventoSoltarRaton = new Event('mouseup', { bubbles: true, cancelable: false })
 
 let currentDroppable = null;
 let droppableBelow = null;
@@ -36,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fichaX.addEventListener('mousedown', moverFicha);
     fichaO.addEventListener('mousedown', moverFicha);
 
-    setInterval(temporizadorJuego, 1000);
+    contaJuego = setInterval(temporizadorJuego, 1000);
     iniciarTurno();
 });
 
@@ -45,35 +69,57 @@ document.addEventListener('DOMContentLoaded', () => {
 function temporizadorJuego() {
     txtTiempoJuego.innerText = tiempoJuego + 's';
     tiempoJuego -= 1;
+    if (tiempoJuego === -1) {
+        clearInterval(contaJuego);
+        //window.location.assign("index.html");
+    }
 }
 
 function iniciarTurno() {
-    clearInterval(turno);
+    // Disparamos un evento mouseup en ambas fichas para forzar el soltado de la ficha anterior
+    fichaX.dispatchEvent(eventoSoltarRaton);
+    fichaO.dispatchEvent(eventoSoltarRaton);
+
+    // Paramos el segundero y reiniciamos el tiempo del turno
+    clearInterval(contaTurno);
     tiempoTurno = 4;
-    // Vaciamos los listeners de las fichas del turno anterior y cambiamos el puntero
-    if (puntero === "cruz") {
-        puntero = "circulo";
-        fichaX.removeEventListener('mousedown', moverFicha);
-        contaTurnoX.classList.remove('contaTurno--activo');
-        txtTiempoTurnoX.innerText = '5';
 
-        fichaO.addEventListener('mousedown', moverFicha);
-        contaTurnoO.classList.add('contaTurno--activo');
-    } else {
-        puntero = "cruz";
-        fichaO.removeEventListener('mousedown', moverFicha);
-        contaTurnoO.classList.remove('contaTurno--activo');
-        txtTiempoTurnoO.innerText = '5';
+    if (terminado === false) {
+        // Vaciamos los listeners de las fichas del turno anterior y cambiamos el puntero
+        if (puntero === "cruz") {
+            puntero = "circulo";
+            fichaX.removeEventListener('mousedown', moverFicha);
+            fichaX.classList.remove('ficha--activa');
+            contaTurnoX.classList.remove('contaTurno--activo');
+            txtTiempoTurnoX.innerText = '0';
 
-        fichaX.addEventListener('mousedown', moverFicha);
-        contaTurnoX.classList.add('contaTurno--activo');
+            fichaO.addEventListener('mousedown', moverFicha);
+            fichaO.classList.add('ficha--activa');
+            contaTurnoO.classList.add('contaTurno--activo');
+            txtTiempoTurnoO.innerText = '5';
+        } else {
+            puntero = "cruz";
+            fichaO.removeEventListener('mousedown', moverFicha);
+            fichaO.classList.remove('ficha--activa');
+            contaTurnoO.classList.remove('contaTurno--activo');
+            txtTiempoTurnoO.innerText = '0';
+
+            fichaX.addEventListener('mousedown', moverFicha);
+            fichaX.classList.add('ficha--activa');
+            contaTurnoX.classList.add('contaTurno--activo');
+            txtTiempoTurnoX.innerText = '5';
+        }
+
+        contaTurno = setInterval(temporizadorTurno, 1000);
     }
-
-    turno = setInterval(temporizadorTurno, 1000);
 }
 
 function temporizadorTurno() {
+    // console.log("Puntero: ", puntero);
+    //console.log("Turno jugador: ", contaTurno);
     if (tiempoTurno === 0) {
+        clearInterval(contaTurno);
+        clearInterval(miTurno);
         iniciarTurno();
     }
     else {
@@ -133,7 +179,7 @@ function comprobarVictoria(puntero) {
         let col = (longitud - diag - 1);
         jugadaGanadora[diag] = '' + diag + col;
     }
-    console.log('Diagonal 2: ', jugadaGanadora);
+    // console.log('Diagonal 2: ', jugadaGanadora);
 
     resultados =  [...casillero].reverse().map((valor, indice) => valor[indice]).filter((v) => (v === puntero)).length;
     if (resultados > 2) return true;
@@ -153,8 +199,7 @@ function estaLibre(casilla) {
 
 function pulsar(casilla)  {
     if (terminado === false) {
-        iniciarTurno();
-        console.log(casilla.id);
+        // console.log(casilla.id);
         let fila = parseInt(casilla.id.charAt(3));
         let columna = parseInt(casilla.id.charAt(4));
         
@@ -162,34 +207,38 @@ function pulsar(casilla)  {
             casillero[fila][columna] = puntero;
             casilla.innerHTML = '<div id="ficha' + casilla.id.charAt(3) + casilla.id.charAt(4) + '" class="' + puntero + '"></div>';
 
-            if (comprobarVictoria(puntero) === false) {
-                puntero = (puntero === "cruz") ? "circulo" : "cruz";
-                
+            if (puntero === 'cruz') {
+                movsX += 1;
+                contaMovsX.innerText = movsX + ' mv';
             } else {
-                terminado = true;
+                movsO += 1;
+                contaMovsO.innerText = movsO + ' mv';
+            }
 
-                // Vaciamos los listeners de las fichas
-                fichaX.removeEventListener('mousedown', moverFicha);
-                fichaO.removeEventListener('mousedown', moverFicha);
-                
+            if (comprobarVictoria(puntero) === false) {
+                iniciarTurno();
+            } else {
+                // Ha terminado la partida
+                terminado = true;
+                // Marcamos las casillas de la jugada ganadora con la clase variante "--final", que le dara color
                 for (let id of jugadaGanadora) {
-                    console.log('ID casilla: ', id);
                     document.getElementById('ficha' + id).className = puntero + '--final';
-                    //console.log(document.getElementById('ficha' + id).className);
                 }
 
-                document.getElementById('resultado').innerText = '¡¡Gana el jugador ' + puntero + '!!';
-                document.getElementById('opciones').style.visibility = "visible";
+                partidaTerminada();
             }
 
             turno++;
             //console.log(turno);
 
             if (turno === 9 && terminado === false) {
-                document.getElementById('resultado').innerHTML = '<p>¡¡Empate!! ¿Quieres volver a jugar?</p>';
-                document.getElementById('opciones').style.visibility = "visible";
+                // Se han lanzado nueve fichas y no hay ganador, por tanto es un empate, y por tanto se termina la partida 
                 terminado = true;
-            } else if (puntero === "circulo" && terminado === false) { // Turno del ordenador, si el tablero no está lleno
+
+                partidaTerminada();
+                
+
+            } /* else if (puntero === "circulo" && terminado === false) { // Turno del ordenador, si el tablero no está lleno
 
                 let seleccionFilaPC;
                 let seleccionColumnaPC;
@@ -198,13 +247,32 @@ function pulsar(casilla)  {
                     seleccionColumnaPC = Math.floor(Math.random()*3);
                     //console.log(seleccionPC);
                 } while (pulsar(document.getElementById('cas' + seleccionFilaPC + seleccionColumnaPC)) === false);
-            }
+                iniciarTurno();
+            } */
 
             return true;
         }
         else return false;
     }
     return false;
+}
+
+function partidaTerminada() {
+    // Detenemos el segundero de los turnos
+    clearInterval(contaTurno);
+
+    // Vaciamos los listeners de las fichas para que el usuario ya no pueda interactuar con ellas
+    fichaX.removeEventListener('mousedown', moverFicha);
+    fichaO.removeEventListener('mousedown', moverFicha);
+    fichaX.classList.remove('ficha--activa');
+    fichaO.classList.remove('ficha--activa');
+    contaTurnoX.classList.remove('contaTurno--activo');
+    contaTurnoO.classList.remove('contaTurno--activo');
+    fichaX.style='';
+    fichaO.style='';
+
+    // Mostramos el boton para acceder a la interfaz de resultados
+    document.getElementById('btnResultados').style.visibility = 'visible';
 }
 
 
@@ -217,8 +285,8 @@ for (let casilla of casillas) {
 }
 
 function moverFicha(event) {
-
     //console.log("Activado evento");
+
     let ficha = event.target;
     if (ficha.classList.contains('cruz') || ficha.classList.contains('circulo')) {
         ficha = ficha.parentElement;
@@ -240,9 +308,11 @@ function moverFicha(event) {
     // move our absolutely positioned ball under the pointer
     //moveAt(event.pageX, event.pageY);
 
-    function onMouseMove(event) {
+    function arrastraFicha(event) {
+        // Mueve la ficha con el ratón
         moveAt(event.pageX, event.pageY);
         
+        // Esconde y muestra la ficha para poder detectar casillas vacías debajo
         ficha.style.display = 'none';
         ficha.childNodes[0].hidden = true;
         let elemBelow = document.elementFromPoint(event.clientX, event.clientY);
@@ -250,46 +320,47 @@ function moverFicha(event) {
         ficha.style.display = 'flex';
         ficha.childNodes[0].hidden = false;
 
-        // mousemove events may trigger out of the window (when the ball is dragged off-screen)
-        // if clientX/clientY are out of the window, then elementFromPoint returns null
-        if (!elemBelow) return;
+        // Mousemove se puede disparar fuera de la ventana al arrastrar la ficha fuera de la pantalla
+        // Si clientX o clientY estan fuera de la ventana, elementFromPoint devuelve null
+        if (!elemBelow || tiempoTurno === 0) return;
 
-        // potential droppables are labeled with the class "droppable" (can be other logic)
+        // Las casillas donde se puede arrastrar tienen la clase "casilla"
         droppableBelow = elemBelow.closest('.casilla');
 
         if (currentDroppable != droppableBelow) {
-            // we're flying in or out...
-            // note: both values can be null
-            //   currentDroppable=null if we were not over a droppable before this event (e.g over an empty space)
-            //   droppableBelow=null if we're not over a droppable now, during this event
+            // Estamos entrando o saliendo de una casilla
+            // Ambos valores pueden ser null
+            // currentDroppable será null si no estamos sobre una casilla antes de este evento
+            // droppableBelow será null si no estamos sobre una casilla ahora mismo durante este evento
 
             if (currentDroppable) {
-                // the logic to process "flying out" of the droppable (remove highlight)
+                // En esta caso estaremos dejando una casilla, ejecutamos la funcion para eliminar el resaltado de la misma
                 leaveDroppable(currentDroppable);
             }
 
             currentDroppable = droppableBelow;
-
+            
             if (currentDroppable) {
-                // the logic to process "flying in" of the droppable
+                // Aqui estamos entrando en una casilla disponible, por lo que le aplicamos el resaltado
                 enterDroppable(currentDroppable);
             }
         }
     }
 
-    // (2) move the ball on mousemove
-    document.addEventListener('mousemove', onMouseMove);
+    // La ficha se mueve con un mousemove que se escucha en document para que funcione todo el tiempo
+    document.addEventListener('mousemove', arrastraFicha);
 
-    // (3) drop the ball, remove unneeded handlers
-    ficha.onmouseup = function() {
+    // Se suelta la ficha, se elimina la escucha de mousemove.
+    function soltarFicha() {
         if (currentDroppable) {
-            leaveDroppable(currentDroppable)
-            pulsar(currentDroppable);
+            leaveDroppable(currentDroppable);
+            if (tiempoTurno != 0) pulsar(currentDroppable);
         }
-        document.removeEventListener('mousemove', onMouseMove);
-        ficha.onmouseup = null;
+        document.removeEventListener('mousemove', arrastraFicha);
         ficha.style = "";
     };
+
+    ficha.addEventListener('mouseup', soltarFicha);
 }
 
 function enterDroppable(elem) {
@@ -308,7 +379,7 @@ var btnSalir = document.querySelector('#salir');
 
 
 // Reinicia los valores y vacía el casillero
-btnJugar.addEventListener("click", function() {
+/* btnJugar.addEventListener("click", function() {
     //window.location.reload(); // opcion facil
 
     puntero = "cruz";
@@ -327,4 +398,4 @@ btnJugar.addEventListener("click", function() {
     fichaX.addEventListener('mousedown', moverFicha);
     fichaO.addEventListener('mousedown', moverFicha);
 
-});
+}); */

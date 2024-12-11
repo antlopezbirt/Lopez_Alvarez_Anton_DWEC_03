@@ -178,6 +178,10 @@ button:hover, .boton--seleccionado {
 }
 
 .ficha:hover {
+  cursor: not-allowed;
+}
+
+.ficha--activa:hover{
   cursor: grab;
 }
 
@@ -204,9 +208,9 @@ button:hover, .boton--seleccionado {
 }
 
 .lanzable {
-  background-color: var(--color-lanzable);
-  animation: resplandor 1s ease infinite;
-  transition: all .1s ease-in-out;
+  /* background-color: var(--color-fondo); */
+  animation: resplandor .5s ease infinite;
+  /* transition: all .5s ease-in-out; */
 }
   
 /* El resplandor de las casillas vacias varia con una animacion */
@@ -214,6 +218,7 @@ button:hover, .boton--seleccionado {
 @keyframes resplandor {
   from {
     background-color: var(--color-fondo);
+    
   }
   50% {
     background-color: var(--color-lanzable);
@@ -329,15 +334,16 @@ las clases con otro nombre para cambiarle el color a las fichas ganadoras */
   border: .4rem solid var(--color-blanco);
 }
 
-
-
-
-#resultado, #opciones {
-  text-align: center;
+#resultado {
+  display: flex;
+  align-items: end;
+  justify-content: center;
 }
 
-#opciones {
+#btnResultados {
   visibility: hidden;
+  width: 100%;
+  margin-bottom: 0;
 }
 
 
