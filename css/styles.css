@@ -5,7 +5,10 @@
   --color-rojo-claro: #FFE5E5;
   --color-blanco: #fff;
   --color-lanzable: #60a0ff;
+  --color-grisaceo: #aaa;
 }
+
+/*---------- ELEMENTOS COMUNES ----------*/
 
 html {
   box-sizing: border-box;
@@ -17,7 +20,7 @@ html {
 
 header {
   text-align: center;
-  margin-top: 4rem;
+  margin-top: 2rem;
 }
 
 main {
@@ -58,15 +61,16 @@ input {
 }
 
 button {
-  font-size: 2.4rem;
-  width: 33rem;
-  height: 5rem;
   background-color: var(--color-fondo);
   border-radius: 1rem;
   border: var(--color-blanco) solid .4rem;
   color: var(--color-blanco);
-  transition: .2s ease-in-out;
+  display: inline-block;
+  font-size: 2.4rem;
+  height: 5rem;
   margin: 2rem 0;
+  padding: 0 4rem;
+  transition: .2s ease-in-out;
 }
 
 button:hover, .boton--seleccionado {
@@ -74,34 +78,15 @@ button:hover, .boton--seleccionado {
   border-color: var(--color-azul);
 }
 
-.botonizq {
-  border-right: 0;
-  border-radius: 1rem 0 0 1rem;
-  width: 17.5rem;
-  display: inline-block;
+
+/*---------- LOGIN ----------*/
+
+#btnEntrar {
+  width: 33rem;
+  padding: 0;
 }
 
-.botoncentro {
-  border-right: 0;
-  border-left: 0;
-  border-radius: 0;
-  width: 17.5rem;
-  display: inline-block;
-}
-
-.botondch {
-  border-left: 0;
-  border-radius: 0 1rem 1rem 0;
-  width: 17.5rem;
-  display: inline-block;
-}
-
-#btnJugar {
-  width: initial;
-  padding: 0 4rem;
-}
-
-span {
+#txtErrorLogin {
   margin-top: 4rem;
   margin-bottom: 4rem;
   border: var(--color-rojo) solid .3rem;
@@ -121,23 +106,55 @@ span {
 }
 
 
-/* TABLERO DE JUEGO */
+/*---------- BIENVENIDA ----------*/
 
-#areaJuego {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  /* width: 70%; */
-  margin: 5rem 0;
+.botonera button {
+  width: initial;
 }
 
-#areaFichasX, #areaFichasO {
-  width: 100%;
+.botonizq {
+  border-right: 0;
+  border-radius: 1rem 0 0 1rem;
+  width: 17.5rem;
+}
+
+.botoncentro {
+  border-right: 0;
+  border-left: 0;
+  border-radius: 0;
+  width: 17.5rem;
+}
+
+.botondch {
+  border-left: 0;
+  border-radius: 0 1rem 1rem 0;
+  width: 17.5rem;
+}
+
+
+/*---------- JUEGO ----------*/
+
+#rejillaJuego {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 5rem 0;
+  row-gap: 1rem;
+}
+
+/* AREA DE JUEGO */
+
+.areaFichas  {
   display: flex;
-  align-items: end;
+  align-items: center;
+}
+
+#areaFichasX {
+  padding-left: 1.7rem;
 }
 
 #areaFichasO {
-  justify-content:right;
+  justify-content: right;
+  margin-right: 1.7rem;
 }
 
 .ficha {
@@ -151,6 +168,13 @@ span {
   justify-content: center;
   display: flex;
 }
+
+.ficha:hover {
+  cursor: grab;
+}
+
+
+/* TABLERO */
 
 #tablero {
   display: grid;
@@ -177,7 +201,7 @@ span {
   transition: all 1s ease-in-out;
 }
   
-/* En lugar de usar alternate he puesto un punto intermedio que hace de tope, ya que no me gustaba el timing de alternate */
+/* El resplandor de las casillas vacias varia con una animacion */
   
 @keyframes resplandor {
   from {
@@ -193,60 +217,62 @@ span {
 
 .circulo {
   /*
-    Un poco frikada... Para que la cruz y el círculo sean igual de altos y anchos
-    he calculado las dimensiones del círculo basándome en la longitud del aspa de
-    la cruz, que al proyectarse sobre la verticual (hipotenusa), sería más corta.
-    En resumen, tirando de fórmula, se calcula mediante el coseno del ángulo (45º)
-    por la hipotenusa (longitud del aspa).
+    Pequeña frikada... Para que la cruz y el círculo sean igual de altos y anchos
+    he calculado el diámetro del círculo basándome en la longitud del aspa de
+    la cruz, cuya proyección sobre la vertical u horizontal se acorta debido al 
+    ángulo de inclinación de cada brazo del aspa.
+    
+    En resumen, tirando de fórmula, se calcula mediante el coseno del ángulo (en
+    este caso 45º) por la hipotenusa (longitud de cada brazo).
 
     https://www.disfrutalasmatematicas.com/seno-coseno-tangente.html
   */
-  width: calc(7.5rem * cos(45deg)); 
-  height: calc(7.5rem * cos(45deg));
-  border: .8rem solid var(--color-blanco);
   border-radius: 100%;
+  border: .8rem solid var(--color-blanco);
+  height: calc(7.5rem * cos(45deg));
+  width: calc(7.5rem * cos(45deg)); 
 }
 
 .cruz {
-  width: 7.5rem;
+  background: var(--color-blanco); /* Sin el background se ve una rayita en Firefox */
+  border-radius: .4rem;
+  border: .4rem solid var(--color-blanco);
   height: 0;
   position: absolute;
-  border: .4rem solid var(--color-blanco);
-  background: var(--color-blanco); /* Sin el background se ve una rayita en Firefox */
   rotate: 45deg;
-  border-radius: .4rem;
+  width: 7.5rem;
 }
 
 .cruz:after {
-  content: "";
-  position: absolute;
-  width: 7.5rem;
-  height: 0;
-  border: .4rem solid var(--color-blanco);
   background: var(--color-blanco);
   border-radius: .4rem;
+  border: .4rem solid var(--color-blanco);
+  content: "";
+  height: 0;
+  position: absolute;
   rotate: 90deg;
   translate: -4.125rem -0.38rem;
+  width: 7.5rem;
 }
 
 /* Javascript no puede seleccionar seudoelementos, por lo que tengo que duplicar
 las clases con otro nombre para cambiarle el color a las fichas ganadoras */
 
 .circulo--final {
-  width: calc(7.5rem * cos(45deg)); 
-  height: calc(7.5rem * cos(45deg));
-  border: .8rem solid var(--color-azul);
   border-radius: 100%;
+  border: .8rem solid var(--color-azul);
+  height: calc(7.5rem * cos(45deg));
+  width: calc(7.5rem * cos(45deg)); 
 }
 
 .cruz--final {
-  width: 7.5rem;
+  background: var(--color-azul);
+  border-radius: .4rem;
+  border: .4rem solid var(--color-azul);
   height: 0;
   position: absolute;
-  border: .4rem solid var(--color-azul);
-  background: var(--color-azul);
   rotate: 45deg;
-  border-radius: .4rem;
+  width: 7.5rem;
 }
 
 .cruz--final:after {
@@ -261,10 +287,81 @@ las clases con otro nombre para cambiarle el color a las fichas ganadoras */
   translate: -4.125rem -0.38rem;
 }
 
+
+/* AREA DE INFORMACION */
+
+.areaInfo {
+  display: flex;
+  width: 100%;
+  align-items: top;
+}
+
+.marcador {
+  width: 14rem;
+  display: flex;
+  flex-direction: column;
+}
+
+#areaInfoO {
+  justify-content: right;
+}
+
+.contaTurno {
+  font-size: 6.4rem;
+  border: .4rem solid var(--color-blanco);
+  border-bottom: 0;
+}
+
+.contaTurno--activo {
+  background-color: var(--color-rojo);
+}
+
+.contaMovs {
+  font-size: 3rem;
+  border: .4rem solid var(--color-blanco);
+}
+
+
+
+
 #resultado, #opciones {
   text-align: center;
 }
 
 #opciones {
   visibility: hidden;
+}
+
+
+/*---------- RESULTADOS ----------*/
+
+.resultTitle {
+  font-size: 6.4rem;
+}
+
+.resultNota {
+  color: var(--color-grisaceo);
+}
+
+.result {
+  font-size: 3.6rem;
+}
+
+.resultPrompt {
+  font-size: 4rem;
+  margin-top: 2rem;
+}
+
+#resultSalirJugar {
+  justify-content: space-between;
+}
+
+#btnSalir {
+  margin-right: 5rem;
+}
+
+#btnSalir:hover {
+  background-color: var(--color-blanco);
+  color: var(--color-fondo);
+  border-color: var(--color-blanco);
 }

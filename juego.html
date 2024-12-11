@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,10 +12,16 @@
     <img src="svg/logo.svg">
   </header>
   <main id="mainJuego" name="mainJuego">
+    
+    <div id="rejillaJuego">
 
-    <div id="areaJuego">
+      <!-- AREA DE JUEGO -->
 
-      <div id="areaFichasX"><div id="fichasX" class="ficha"><div class="cruz"></div></div></div>
+      <div id="areaFichasX" name="areaFichasX" class="areaFichas">
+        <div id="fichasX" name="fichasX" class="ficha">
+          <div id="fichaX" name="fichaX" class="cruz"></div>
+        </div>
+      </div>
 
       <div id="tablero" name="tablero">
         <div id="cas00" class="casilla"></div><div id="cas01" class="casilla"></div><div id="cas02" class="casilla"></div>
@@ -23,9 +29,35 @@
         <div id="cas20" class="casilla"></div><div id="cas21" class="casilla"></div><div id="cas22" class="casilla"></div>
       </div>
 
-      <div id="areaFichasO"><div id="fichasO" class="ficha"><div class="circulo"></div></div></div>
+      <div id="areaFichasO" name="areaFichasO" class="areaFichas">
+        <div id="fichasO" class="ficha">
+          <div id="fichaO" name="fichaO" class="circulo"></div>
+        </div>
+      </div>
+
+
+      <!-- AREA DE INFORMACION -->
+
+      <div id="areaInfoX" name="areaInfoX" class="areaInfo">
+        <div id="marcadorX" name="marcadorX" class="marcador">
+          <div id="contaTurnoX" name="contaTurnoX" class="contaTurno">5</div>
+          <div id="contaMovsX" name="contaMovsX" class="contaMovs">4 mv</div>
+        </div>        
+      </div>
+
+      <div id="separador"></div>
+
+      <div id="areaInfoO" name="areaInfoO" class="areaInfo">
+        <div id="marcadorO" name="marcadorO" class="marcador">
+          <div id="contaTurnoO" name="contaTurnoO" class="contaTurno">5</div>
+          <div id="contaMovsO" name="contaMovsO" class="contaMovs">4 mv</div>
+        </div>
+      </div>
+
 
     </div>
+
+    
     
     <div id="resultado">
     </div>

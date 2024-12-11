@@ -228,11 +228,11 @@ function moverFicha(event) {
 }
 
 function enterDroppable(elem) {
-    if(estaLibre(elem)) elem.classList.toggle('lanzable');
+    if(estaLibre(elem)) elem.classList.add('lanzable');
 }
 
 function leaveDroppable(elem) {
-    elem.classList.toggle('lanzable');
+    elem.classList.remove('lanzable');
 }
 
 
