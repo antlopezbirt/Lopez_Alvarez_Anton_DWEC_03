@@ -78,6 +78,7 @@ button {
 button:hover, .boton--seleccionado {
   background-color: var(--color-azul);
   border-color: var(--color-azul);
+  cursor: pointer; 
 }
 
 

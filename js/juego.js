@@ -2,31 +2,37 @@
 
 /*************************** VARIABLES GLOBALES ***************************/
 
-let nivel = localStorage.getItem('nivel');
-let modo = localStorage.getItem('nivel');
+// Sonido de la ficha al caer en el casillero
+let audioFicha = new Audio('../media/audio/ficha.mp3');
+
+let nivel = parseInt(localStorage.getItem('nivel'));
+let modo = parseInt(localStorage.getItem('modo'));
 
 // El tiempo total de juego está fijado en 100 segundos
 // Se pone un segundo menos porque el 100 está ya pintado al inicio
 let tiempoJuego = 99;
 
-// El switch asigna el tiempo del turno correspondiente al nivel seleccionado (8, 4 o 2 segundos)
-let tiempoTurno = 4;
+// El switch asigna el tiempo del turno correspondiente al nivel seleccionado, medido en decimas de segundo
+let tiempoTurno = 0;
 
 switch (nivel) {
-    case 0:
+    case 0: {
         // Principiante
-        tiempoTurno = 8;
+        tiempoTurno = 80;
         break;
-    case 1:
+    }
+    case 1: {
         // Intermedio
-        tiempoTurno = 4;
+        tiempoTurno = 50;
         break;
-    case 2:
+    }
+    case 2: {
         // Avanzado
-        tiempoTurno = 2;
+        tiempoTurno = 30;
         break;
+    }
     default:
-        tiempoTurno = 4;
+        tiempoTurno = 50;
 }
 
 let tiempoTurnoActual = tiempoTurno -1; // Se pone un segundo menos aquí también para no repetir el que ya está pintado
@@ -73,6 +79,7 @@ const btnResultados = document.querySelector('#btnResultados');
 
 // Guarda el estado terminado o no de la partida
 let terminado = false;
+let empate = false;
 
 // Variables para los diferentes contadores
 let turno = 0; // Numero de movimientos totales
@@ -133,7 +140,7 @@ function iniciarTurno() {
 
     // Para el segundero actual y reinicia el tiempo para el nuevo turno
     clearInterval(contaTurno);
-    tiempoTurnoActual = tiempoTurno -1;
+    tiempoTurnoActual = (tiempoTurno - 1);
 
     // Si la partida no ha terminado, continua el siguiente turno
     if (terminado === false) {
@@ -149,7 +156,7 @@ function iniciarTurno() {
             fichaO.addEventListener('mousedown', moverFicha);
             fichaO.classList.add('ficha--activa');
             contaTurnoO.classList.add('contaTurno--activo');
-            txtTiempoTurnoO.innerText = tiempoTurno;
+            txtTiempoTurnoO.innerText = tiempoTurno / 10;
         } else {
             puntero = "cruz";
             fichaO.removeEventListener('mousedown', moverFicha);
@@ -160,11 +167,26 @@ function iniciarTurno() {
             fichaX.addEventListener('mousedown', moverFicha);
             fichaX.classList.add('ficha--activa');
             contaTurnoX.classList.add('contaTurno--activo');
-            txtTiempoTurnoX.innerText = tiempoTurno;
+            txtTiempoTurnoX.innerText = tiempoTurno / 10;
         }
 
         // Pone en marcha el segundero del nuevo turno
-        contaTurno = setInterval(temporizadorTurno, 1000);
+        contaTurno = setInterval(temporizadorTurno, 100);
+
+        // Si estamos en el modo 0 solo juega la máquina, se disparan solos todos los turnos
+        // Y si estamos en el modo 1, la computadora juega sola con el círculo
+        if (modo === 0 || (modo === 1 && puntero === "circulo")) {
+            setTimeout(function() {
+                let seleccionFilaPC;
+                let seleccionColumnaPC;
+                do {
+                    // El PC elige una fila y columna al azar
+                    seleccionFilaPC = Math.floor(Math.random()*3);
+                    seleccionColumnaPC = Math.floor(Math.random()*3);
+                // Si esa casilla no esta libre, elige otra, así hasta que encuentre una libre y la pueda usar
+                } while (pulsar(document.getElementById('cas' + seleccionFilaPC + seleccionColumnaPC)) === false);
+            }, 1000);
+        }
     }
 }
 
@@ -174,9 +196,9 @@ function temporizadorTurno() {
     if (tiempoTurnoActual === 0) iniciarTurno();
     // Si no, actualiza el segundero correspondiente y recorta un segundo
     else {
-        if (puntero === "cruz") txtTiempoTurnoX.innerText = tiempoTurnoActual;
-        else txtTiempoTurnoO.innerText = tiempoTurnoActual;
-        tiempoTurnoActual -=1;
+        if (puntero === "cruz") txtTiempoTurnoX.innerText = Math.trunc(tiempoTurnoActual / 10) + 1;
+        else txtTiempoTurnoO.innerText = Math.trunc(tiempoTurnoActual / 10) + 1;
+        tiempoTurnoActual -= 1;
     }
 }
 
@@ -307,7 +329,12 @@ function pulsar(casilla)  {
             let columna = parseInt(casilla.id.charAt(4));
 
             casillero[fila][columna] = puntero;
+
+            // Muestra la ficha (el puntero) en la casilla elegida
             casilla.innerHTML = '<div id="ficha' + casilla.id.charAt(3) + casilla.id.charAt(4) + '" class="' + puntero + '"></div>';
+
+            // Suena el efecto de sonido de la ficha
+            audioFicha.play();
 
             if (puntero === 'cruz') {
                 movsX += 1;
@@ -331,26 +358,13 @@ function pulsar(casilla)  {
             }
 
             turno++;
-            //console.log(turno);
 
-            if (turno === 9 && terminado === false) {
+            if (turno >= 9 && terminado === false) {
                 // Se han lanzado nueve fichas y no hay ganador, por tanto es un empate, y por tanto se termina la partida 
                 terminado = true;
-
+                empate = true;
                 partidaTerminada();
-                
-
-            } /* else if (puntero === "circulo" && terminado === false) { // Turno del ordenador, si el tablero no está lleno
-
-                let seleccionFilaPC;
-                let seleccionColumnaPC;
-                do {
-                    seleccionFilaPC = Math.floor(Math.random()*3);
-                    seleccionColumnaPC = Math.floor(Math.random()*3);
-                    //console.log(seleccionPC);
-                } while (pulsar(document.getElementById('cas' + seleccionFilaPC + seleccionColumnaPC)) === false);
-                iniciarTurno();
-            } */
+            }
 
             return true;
         }
@@ -358,28 +372,6 @@ function pulsar(casilla)  {
     }
     return false;
 }
-
-function partidaTerminada() {
-    // Detiene el segundero de los turnos
-    clearInterval(contaTurno);
-
-    // Vacia los listeners de las fichas
-    fichaX.removeEventListener('mousedown', moverFicha);
-    fichaO.removeEventListener('mousedown', moverFicha);
-    fichaX.classList.remove('ficha--activa');
-    fichaO.classList.remove('ficha--activa');
-    contaTurnoX.classList.remove('contaTurno--activo');
-    contaTurnoO.classList.remove('contaTurno--activo');
-    fichaX.style='';
-    fichaO.style='';
-
-    // Guarda las estadisticas en LocalStorage
-
-
-    // Mostramos el boton para acceder a la interfaz de resultados
-    document.getElementById('btnResultados').style.visibility = 'visible';
-}
-
 
 // Función que comprueba si en la última jugada se ha conseguido un tres en raya.
 function comprobarVictoria(puntero) {
@@ -428,8 +420,6 @@ function comprobarVictoria(puntero) {
         let col = (longitud - diag - 1);
         jugadaGanadora[diag] = '' + diag + col;
     }
-    // console.log('Diagonal 2: ', jugadaGanadora);
-
     resultados =  [...casillero].reverse().map((valor, indice) => valor[indice]).filter((v) => (v === puntero)).length;
     if (resultados > 2) return true;
 
@@ -437,24 +427,39 @@ function comprobarVictoria(puntero) {
 }
 
 
-// Reinicia los valores y vacía el casillero
-/* btnJugar.addEventListener("click", function() {
-    //window.location.reload(); // opcion facil
+function partidaTerminada() {
+    // Detiene el segundero de los turnos
+    clearInterval(contaTurno);
 
-    puntero = "cruz";
-    casillero = [
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0]
-    ]
-    terminado = false;
-    turno = 0;
-    
-    for (let casilla of casillas) casilla.innerHTML = '';
-    document.getElementById('resultado').innerHTML = '';
-    document.getElementById('opciones').style.visibility = "hidden";
+    // Vacia los listeners de las fichas
+    fichaX.removeEventListener('mousedown', moverFicha);
+    fichaO.removeEventListener('mousedown', moverFicha);
+    fichaX.classList.remove('ficha--activa');
+    fichaO.classList.remove('ficha--activa');
+    contaTurnoX.classList.remove('contaTurno--activo');
+    contaTurnoO.classList.remove('contaTurno--activo');
+    fichaX.style='';
+    fichaO.style='';
 
-    fichaX.addEventListener('mousedown', moverFicha);
-    fichaO.addEventListener('mousedown', moverFicha);
+    // Guarda las estadisticas en LocalStorage
 
-}); */
+    // En este caso son segundos, por eso lo pasa a décimas para que el calculo de estadisticas sea homogeneo.
+    localStorage.setItem('statTiempo', (100 - tiempoJuego - 1) * 10);
+
+    if (empate === true) {
+        localStorage.setItem('statGanador', -1);
+        localStorage.setItem('statMovs', movsX + movsO);
+    }
+    else if (puntero === 'cruz') {
+        localStorage.setItem('statGanador', 1);
+        localStorage.setItem('statMovs', movsX);
+    } else {
+        localStorage.setItem('statGanador', 2);
+        localStorage.setItem('statMovs', movsO);
+    }
+
+    // Espera un instante antes de redirigir a resultados para que el final no sea brusco
+    setTimeout(function() {
+        window.location.assign('resultados.html');
+    }, 1000);
+}

@@ -60,9 +60,9 @@ function chequearUsuario(event) {
         //console.log("Usuario iterado: ", usu.usuario);
         if (user === usu.usuario && pass === usu.contraseña) {
             document.getElementById('txtErrorLogin').classList.remove('visible');
-            console.log("Usuario identificado: ", usu.usuario);
+            console.log('Usuario identificado: ', usu.usuario);
             localStorage.setItem('userNum', i);
-            window.location.assign("bienvenida.html");
+            window.location.assign('bienvenida.html');
         }
     }
 

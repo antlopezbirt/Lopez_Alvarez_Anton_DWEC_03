@@ -8,15 +8,15 @@
 </head>
 <body>
   <header>
-    <img src="svg/logo.svg">
+    <img src="media/svg/logo.svg">
   </header>
 
   <main id="mainBienvenida" name="mainBienvenida">
-    <p class="resultTitle">¡Has ganado!</h1>
-    <p class="resultNota">Has conseguido vencer a la máquina en...</p>
-    <p class="result">12 segundos</p>
-    <p class="resultNota">Para ello te han hecho falta...</p>
-    <p class="result">5 movimientos</p>
+    <p id="txtResultTitle" name="txtResultTitle" class="resultTitle"></h1>
+    <p id="txtResultTitTiempo" name="txtResultTitTiempo" class="resultNota"></p>
+    <p class="result"><span id="txtResultTiempo" name="txtResultTiempo"></span> segundos</p>
+    <p id="txtResultTitMovs" name="txtResultTitMovs" class="resultNota"></p>
+    <p class="result"><span id="txtResultMovs" name="txtResultMovs"></span> movimientos</p>
     <p class="resultPrompt">¿Quieres volver a jugar?</p>
     
     <fieldset id="resultSalirJugar" name="resultSalirJugar">
@@ -25,6 +25,6 @@
     </fieldset>
     
   </main>
-  <script type="module" src="js/bienvenida.js"></script>
+  <script type="module" src="js/resultados.js"></script>
 </body>
 </html>

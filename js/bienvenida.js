@@ -27,6 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn1Jugador').addEventListener('click', activarModo);
     document.getElementById('btn2Jugadores').addEventListener('click', activarModo);
 
+    document.getElementById('btnJugar').addEventListener('click', function() {
+        window.location.assign('juego.html');
+    });
+
     document.getElementById('nombreUsuario').innerText = nombreUsuario;
 });
 
