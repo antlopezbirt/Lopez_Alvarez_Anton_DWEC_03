@@ -142,14 +142,21 @@ button:hover, .boton--seleccionado {
   right: 6rem;
 }
 
+/* AREA DE JUEGO */
+
 #rejillaJuego {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  margin: 5rem 0;
-  row-gap: 1rem;
+  display: flex;
+  /* grid-template-columns: repeat(3, 1fr); */
+  margin: 5rem 0 0;
+  justify-content: center;
+  column-gap: 12.5rem;
 }
 
-/* AREA DE JUEGO */
+.zonaJugador {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 
 .areaFichas  {
   display: flex;
@@ -188,7 +195,7 @@ button:hover, .boton--seleccionado {
 
 /* TABLERO */
 
-#tablero {
+#casillero {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   column-gap: 2rem;
@@ -338,12 +345,13 @@ las clases con otro nombre para cambiarle el color a las fichas ganadoras */
   display: flex;
   align-items: end;
   justify-content: center;
+  margin-bottom: 5rem;
 }
 
 #btnResultados {
   visibility: hidden;
-  width: 100%;
-  margin-bottom: 0;
+  width: 30rem;
+  margin: 4rem 0;
 }
 
 

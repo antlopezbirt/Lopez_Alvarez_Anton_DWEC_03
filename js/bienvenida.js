@@ -1,21 +1,24 @@
 'use strict'
 
-/******* LOGIN ******/
+/******* BIENVENIDA ******/
 
 
-// ------------------------------ 1. VARIABLES GLOBALES ------------------------------
+/*************************** VARIABLES GLOBALES ***************************/
+
 let nivel = 1;
-localStorage.setItem('nivel', nivel);
 let modo = 1;
+let numUsuario = localStorage.getItem('userNum');
+// console.log(numUsuario, )
+let nombreUsuario = JSON.parse(localStorage.getItem('user' + numUsuario)).nombre;
+
+// Registra los valores iniciales en Local Storage
+localStorage.setItem('nivel', nivel);
 localStorage.setItem('modo', modo);
 
-// ------------------------------ 2. CARGA INICIAL DE DATOS ------------------------------
-// Esto inicializa los eventos del formulario y carga los datos iniciales
-document.addEventListener('DOMContentLoaded', async () => {
+/******************** EVENTOS Y FUNCIONES ********************/
 
-
-    // mostrar datos en consola
-    // console.log('Hola, estos son los datos de los usuarios: ', usuariosJSON);
+// Al cargar el documento, se registran los eventos de los botones y se muestra el nombre del usuario
+document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('btnPrincipiante').addEventListener('click', activarNivel);
     document.getElementById('btnIntermedio').addEventListener('click', activarNivel);
@@ -23,54 +26,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('btnAutomatico').addEventListener('click', activarModo);
     document.getElementById('btn1Jugador').addEventListener('click', activarModo);
     document.getElementById('btn2Jugadores').addEventListener('click', activarModo);
+
+    document.getElementById('nombreUsuario').innerText = nombreUsuario;
 });
 
-function chequearUsuario(event) {
-    event.preventDefault();
-    const user = document.getElementById('txtUsuario').value;
-    const pass = document.getElementById('txtPass').value;
-
-    for (let i = 0; i <= (localStorage.length) - 1; i++) {
-        var usu = JSON.parse(localStorage.getItem(i));
-        // console.log("Usuario iterado: ", usu.usuario);
-        if (user === usu.usuario && pass === usu.contraseña) {
-            document.getElementById('txtErrorLogin').classList.remove("visible");
-            console.log("Usuario identificado: ", usu.usuario);
-
-            return true;
-        }
-    }
-
-    /*let spanErrorLogin = document.createElement("span");
-    spanErrorLogin.setAttribute("id", "txtErrorLogin");
-    spanErrorLogin.setAttribute("name", "txtErrorLogin");
-    let textoErrorLogin = document.createTextNode("Login incorrecto");
-    spanErrorLogin.appendChild(textoErrorLogin);
-
-    document.getElementById('mainEntrada').appendChild(spanErrorLogin);*/
-
-    document.getElementById('txtErrorLogin').classList.add("visible");
-
-    return false;
-}
-
+// Activa el nivel seleccionado al pinchar en un boton de nivel
 function activarNivel() {
-    console.log("Nivel activado: ", this.value);
+    // console.log("Nivel activado: ", this.value);
     nivel = this.value;
     for (let boton = 0; boton < this.parentElement.children.length; boton++) {
         this.parentElement.children[boton].classList.remove('boton--seleccionado')
     }
 
     this.classList.add('boton--seleccionado');
+
+    // Registra el nivel seleccionado en Local Storage
     localStorage.setItem('nivel', nivel);
 }
 
+// Activa el modo seleccionado al pinchar en un boton de modo
 function activarModo() {
-    console.log("Modo activado: ", this.value);
+    // console.log("Modo activado: ", this.value);
     modo = this.value;
     for (let boton = 0; boton < this.parentElement.children.length; boton++) {
         this.parentElement.children[boton].classList.remove('boton--seleccionado')
     }
+
     this.classList.add('boton--seleccionado');
+
+    // Registra el modo seleccionado en Local Storage
     localStorage.setItem('modo', modo);
 }

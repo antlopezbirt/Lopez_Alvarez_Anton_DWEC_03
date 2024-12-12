@@ -1,91 +1,144 @@
 'use strict'
 
+/*************************** VARIABLES GLOBALES ***************************/
+
 let nivel = localStorage.getItem('nivel');
 let modo = localStorage.getItem('nivel');
 
-var tiempoJuego = 99;
-var tiempoTurno = 0;
+// El tiempo total de juego está fijado en 100 segundos
+// Se pone un segundo menos porque el 100 está ya pintado al inicio
+let tiempoJuego = 99;
 
-// Asignamos el tiempo del turno correspondiente al nivel seleccionado
+// El switch asigna el tiempo del turno correspondiente al nivel seleccionado (8, 4 o 2 segundos)
+let tiempoTurno = 4;
+
 switch (nivel) {
     case 0:
+        // Principiante
         tiempoTurno = 8;
         break;
     case 1:
+        // Intermedio
         tiempoTurno = 4;
         break;
     case 2:
+        // Avanzado
         tiempoTurno = 2;
         break;
+    default:
+        tiempoTurno = 4;
 }
 
-const contaTurnoX = document.getElementById('contaTurnoX');
-const contaTurnoO = document.getElementById('contaTurnoO');
-const contaMovsX = document.getElementById('contaMovsX');
-const contaMovsO = document.getElementById('contaMovsO');
+let tiempoTurnoActual = tiempoTurno -1; // Se pone un segundo menos aquí también para no repetir el que ya está pintado
 
-const txtTiempoJuego = document.getElementById('tiempoJuego');
-const txtTiempoTurnoX = document.getElementById('contaTurnoX');
-const txtTiempoTurnoO = document.getElementById('contaTurnoO');
+// El puntero es el símbolo que hay que pintar en cada turno (cruz o círculo)
+let puntero = "";
 
-var puntero = "circulo";
-var casillero = [
+// Se podría haber hecho también con casillas de numeración correlativa, pero se ha hecho mediante una matriz
+let casillero = [
     [0, 0, 0],
     [0, 0, 0],
     [0, 0, 0]
 ]
-const casillas = document.querySelectorAll("div[id^='cas']");
 
-var terminado = false;
-var turno = 0;
-var contaTurno = null
-var contaJuego = null;
-var miTurno = null;
-let movsX = 0;
-let movsO = 0;
+// Se asignan en constantes todos los elementos que interactuarán con los eventos del juego
 
-var jugadaGanadora = [];
-var fichaX = document.getElementById('fichasX');
-var fichaO = document.getElementById('fichasO');
+// Descomentar si se quiere tener también la opción de jugar clicando en las casillas (modo clasico)
+//const casillas = document.querySelectorAll("div[id^='cas']");
 
-const eventoSoltarRaton = new Event('mouseup', { bubbles: true, cancelable: false })
+// Fichas
+const fichaX = document.getElementById('fichasX');
+const fichaO = document.getElementById('fichasO');
 
-let currentDroppable = null;
-let droppableBelow = null;
+// Si se pincha directamente en la figura de la ficha, se necesita acceder su elemento padre
 let padre = null;
 
+// Contador de tiempo general
+const txtTiempoJuego = document.getElementById('tiempoJuego');
 
-// Inicialización
+// Contadores que contienen los segunderos de turno y cambian de color
+const contaTurnoX = document.getElementById('contaTurnoX');
+const contaTurnoO = document.getElementById('contaTurnoO');
+
+// Elemento con el valor de los segunderos
+const txtTiempoTurnoX = document.getElementById('contaTurnoX');
+const txtTiempoTurnoO = document.getElementById('contaTurnoO');
+
+// Contadores de los movimientos de cada jugador
+const contaMovsX = document.getElementById('contaMovsX');
+const contaMovsO = document.getElementById('contaMovsO');
+
+// Boton para acceder a los resultados
+const btnResultados = document.querySelector('#btnResultados');
+
+// Guarda el estado terminado o no de la partida
+let terminado = false;
+
+// Variables para los diferentes contadores
+let turno = 0; // Numero de movimientos totales
+let contaTurno = null; // Manejador de los tiempos de turno
+let contaJuego = null; // Manejador del tiempo total de juego
+let movsX = 0; // Movimientos realizados por el jugador de las cruces
+let movsO = 0; // Movimientos realizados por el jugador de los círculos
+
+// Variable que conserva la jugada ganadora para marcarla cuando se produzca
+let jugadaGanadora = [];
+
+// Evento que se dispara a discreción por el programa para forzar el soltado de la ficha cuando se agota el tiempo de turno
+const eventoSoltarRaton = new Event('mouseup', { bubbles: true, cancelable: false })
+
+// Casilla sobre la que se encuentra la ficha previamente
+let casillaActual = null;
+
+// Casilla sobre la que se encuentra la ficha ahora
+let casillaDebajo = null;
+
+
+/*********************** INICIALIZACIÓN DEL JUEGO ****************************/
+
 document.addEventListener('DOMContentLoaded', () => {
+    // Registra los eventos de las fichas
     fichaX.addEventListener('mousedown', moverFicha);
     fichaO.addEventListener('mousedown', moverFicha);
 
+    // Si se descomenta se podrá jugar también pinchando en el tablero, al estilo clásico
+    // for (let casilla of casillas) {
+    //     casilla.addEventListener("click", function() {
+    //         pulsar(casilla);
+    //     });
+    // }
+
+    // Se inicia el contador general y el primer turno
     contaJuego = setInterval(temporizadorJuego, 1000);
     iniciarTurno();
 });
 
-/****************************** FUNCIONES ***********************************/
+/*********************** CONTROL DE TIEMPO Y DE TURNOS ***********************/
 
+// Actualiza el temporizador general. Al agotar el tiempo redirige a la pantalla de login
 function temporizadorJuego() {
-    txtTiempoJuego.innerText = tiempoJuego + 's';
+    txtTiempoJuego.innerText = tiempoJuego;
     tiempoJuego -= 1;
     if (tiempoJuego === -1) {
-        clearInterval(contaJuego);
-        //window.location.assign("index.html");
+        window.location.assign("index.html");
     }
 }
 
+// Cambia de turno
 function iniciarTurno() {
+
     // Disparamos un evento mouseup en ambas fichas para forzar el soltado de la ficha anterior
     fichaX.dispatchEvent(eventoSoltarRaton);
     fichaO.dispatchEvent(eventoSoltarRaton);
 
-    // Paramos el segundero y reiniciamos el tiempo del turno
+    // Para el segundero actual y reinicia el tiempo para el nuevo turno
     clearInterval(contaTurno);
-    tiempoTurno = 4;
+    tiempoTurnoActual = tiempoTurno -1;
 
+    // Si la partida no ha terminado, continua el siguiente turno
     if (terminado === false) {
-        // Vaciamos los listeners de las fichas del turno anterior y cambiamos el puntero
+
+        // Vacia los listeners del turno anterior, reinicia valores y cambia el puntero
         if (puntero === "cruz") {
             puntero = "circulo";
             fichaX.removeEventListener('mousedown', moverFicha);
@@ -96,7 +149,7 @@ function iniciarTurno() {
             fichaO.addEventListener('mousedown', moverFicha);
             fichaO.classList.add('ficha--activa');
             contaTurnoO.classList.add('contaTurno--activo');
-            txtTiempoTurnoO.innerText = '5';
+            txtTiempoTurnoO.innerText = tiempoTurno;
         } else {
             puntero = "cruz";
             fichaO.removeEventListener('mousedown', moverFicha);
@@ -107,103 +160,152 @@ function iniciarTurno() {
             fichaX.addEventListener('mousedown', moverFicha);
             fichaX.classList.add('ficha--activa');
             contaTurnoX.classList.add('contaTurno--activo');
-            txtTiempoTurnoX.innerText = '5';
+            txtTiempoTurnoX.innerText = tiempoTurno;
         }
 
+        // Pone en marcha el segundero del nuevo turno
         contaTurno = setInterval(temporizadorTurno, 1000);
     }
 }
 
+// Controla el curso del tiempo de cada turno
 function temporizadorTurno() {
-    // console.log("Puntero: ", puntero);
-    //console.log("Turno jugador: ", contaTurno);
-    if (tiempoTurno === 0) {
-        clearInterval(contaTurno);
-        clearInterval(miTurno);
-        iniciarTurno();
-    }
+    // Si el tiempo se acaba, cambia de turno
+    if (tiempoTurnoActual === 0) iniciarTurno();
+    // Si no, actualiza el segundero correspondiente y recorta un segundo
     else {
-        if (puntero === "cruz") {
-            txtTiempoTurnoX.innerText = tiempoTurno;
-        } else {
-            txtTiempoTurnoO.innerText = tiempoTurno;
-        }
-        tiempoTurno -=1;
+        if (puntero === "cruz") txtTiempoTurnoX.innerText = tiempoTurnoActual;
+        else txtTiempoTurnoO.innerText = tiempoTurnoActual;
+        tiempoTurnoActual -=1;
     }
 }
 
-// Función que comprueba si la última jugada ha conseguido un tres en raya.
-function comprobarVictoria(puntero) {
 
-    let resultados = 0;
-    let longitud = casillero[0].length; // Al abstraernos de la longitud, nos valdría con cualquiera, siempre que sea impar.
+/****************************  MECANICA DE JUEGO *****************************/
 
-    // Buscamos el nº de ocurrencias en cada fila, iteramos las filas y filtramos los valores para contar resultados.
-    for (let fila = 0; fila < longitud; fila++) {
-        for (let col = 0; col < longitud; col++)
-            // Transforma las posiciones bidimensionales a la numeración de las casillas.
-            jugadaGanadora[col] = ''+ fila + col;
-
-        // Filtra los valores de esa fila y cuenta las ocurrencias.
-        resultados = casillero[fila].filter((v) => (v === puntero)).length;
-
-        // Si son más de dos, existe un tres en raya en esta posición.
-        if (resultados > 2) return true;
-    }
-
-    // Para filtrar los valores de las columnas usamos map:
-    // https://stackoverflow.com/questions/7848004/get-column-from-a-two-dimensional-array
-    for (let col = 0; col < longitud; col++) {
-        for (let fila = 0; fila < longitud; fila++)
-            // Transforma las posiciones bidimensionales a la numeración de las casillas correlativas.
-            jugadaGanadora[fila] = ''+ fila + col;
-
-        resultados =  casillero.map((valor,indice) => valor[col]).filter((v) => (v === puntero)).length;
-        if (resultados > 2) return true;
-    }
-
-    // Los valores de las diagonales también se filtrarán con map:
-    // https://stackoverflow.com/questions/67168295/how-do-i-get-the-diagonal-values-in-an-array
-
-    // Diagonal 1
-    for (let diag = 0; diag < longitud; diag++)
-        // Transforma las posiciones bidimensionales a la numeración de las casillas correlativas.
-        jugadaGanadora[diag] = '' + diag + diag;
-
-    resultados =  casillero.map((valor, indice) => valor[indice]).filter((v) => (v === puntero)).length;
-    if (resultados > 2) return true;
-
-    // Diagonal 2
-    for (let diag = 0; diag < longitud; diag++) {
-        // Transforma las posiciones bidimensionales a la numeración de las casillas correlativas.
-        let col = (longitud - diag - 1);
-        jugadaGanadora[diag] = '' + diag + col;
-    }
-    // console.log('Diagonal 2: ', jugadaGanadora);
-
-    resultados =  [...casillero].reverse().map((valor, indice) => valor[indice]).filter((v) => (v === puntero)).length;
-    if (resultados > 2) return true;
-
+// Comprueba si una casilla esta libre o no
+function estaLibre(casilla) {
+    // Si esta libre, true. Si no, false.
+    if (posicionCasillero(casilla) === 0) return true;
     return false;
 }
 
-function estaLibre(casilla) {
-    // Transformamos los valores correlativos de los ID de las casillas a valoresde filas y columnas para acceder al array del casillero
+// Obtiene la posición de la casilla en la matriz del casillero a partir de su ID
+function posicionCasillero(casilla) {
+    // Transforma los ID de las casillas a filas y columnas para consultar el array del casillero
     let fila = parseInt(casilla.id.charAt(3));
     let columna = parseInt(casilla.id.charAt(4));
-        
-    if (casillero[fila][columna] === 0) return true;
 
-    return false;
+    return casillero[fila][columna];
 }
 
-function pulsar(casilla)  {
-    if (terminado === false) {
-        // console.log(casilla.id);
-        let fila = parseInt(casilla.id.charAt(3));
-        let columna = parseInt(casilla.id.charAt(4));
+
+// Funcion que mueve a la ficha siguiendo al raton. Se activa al hacer mousedown sobre una ficha.
+// Tiene anidadas las funciones moverA, arrastrarFicha y soltarFicha, directamente ligadas al evento mousedown
+function moverFicha(event) {
+
+    // Detecta que ficha ha provocado el evento y la guarda para trabajar con ella.
+    // Si se pincha sobre las lineas de la figura (cruz o circulo), se elige al elemento padre, que es la ficha
+    let ficha = event.target;
+    if (ficha.classList.contains('cruz') || ficha.classList.contains('circulo')) {
+        ficha = ficha.parentElement;
+    }
+
+    // Añade los registros de eventos correspondientes.
+
+    // La ficha se mueve con un mousemove que se escucha en document para que funcione todo el tiempo
+    document.addEventListener('mousemove', arrastrarFicha);
+
+    // Si se hace mouseup en la ficha, se suelta la ficha
+    ficha.addEventListener('mouseup', soltarFicha);
+
+    // Prepara la ficha para moverla: le da posicion absoluta y la levanta en el eje Z
+    ficha.style.position = 'absolute';
+    ficha.style.zIndex = 1000;
+
+    // Hace un centrado inicial de la ficha en el puntero del raton
+    moverA(event.pageX, event.pageY);
+
+    // Mueve la ficha a las coordenadas pageX y pageY del puntero del raton
+    function moverA(pageX, pageY) {
+        ficha.style.left = pageX - ficha.offsetWidth / 2 + 'px';
+        ficha.style.top = pageY - ficha.offsetHeight / 2 + 'px';
+    }
+
+    // Mueve la ficha adonde vaya el raton
+    function arrastrarFicha(event) {
+        // Mueve la ficha con el ratón
+        moverA(event.pageX, event.pageY);
         
-        if (casillero[fila][columna] === 0) {
+        // Al moverse, continuamente se esconde y se muestra la ficha para detectar si casillas vacías debajo
+        ficha.style.display = 'none';
+        ficha.childNodes[0].hidden = true;
+
+        let elemDebajo = document.elementFromPoint(event.clientX, event.clientY);
+
+        ficha.style.display = 'flex';
+        ficha.childNodes[0].hidden = false;
+
+        // Mousemove se puede disparar fuera de la ventana al arrastrar la ficha fuera de la pantalla
+        // Si clientX o clientY estan fuera de la ventana, elementFromPoint devuelve null
+        // Si se acaba el tiempo, salimos de esta funcion
+        if (!elemDebajo) return;
+
+        // Las casillas donde se puede arrastrar tienen la clase "casilla"
+        casillaDebajo = elemDebajo.closest('.casilla');
+
+        if (casillaActual != casillaDebajo) {
+            // Estamos entrando o saliendo de una casilla
+            // Ambos valores pueden ser null
+            // casillaActual será null si no estamos sobre una casilla antes de este evento
+            // casillaDebajo será null si no estamos sobre una casilla ahora mismo durante este evento
+
+            if (casillaActual) {
+                // En esta caso estaremos dejando una casilla, ejecutamos la funcion para eliminar el resaltado de la misma
+                saleDeCasilla(casillaActual);
+            }
+
+            casillaActual = casillaDebajo;
+            
+            if (casillaActual) {
+                // Aqui estamos entrando en una casilla disponible, por lo que le aplicamos el resaltado
+                entraEnCasilla(casillaActual);
+            }
+        }
+    }
+
+    // Se suelta la ficha, se elimina la escucha de mousemove.
+    function soltarFicha() {
+        if (casillaActual) {
+            saleDeCasilla(casillaActual);
+            if (tiempoTurnoActual != 0) pulsar(casillaActual);
+        }
+        document.removeEventListener('mousemove', arrastrarFicha);
+        // Se recoloca la ficha en su posicion original
+        ficha.style = '';
+    };
+
+    // Al entrar en una casilla libre, se aplica un efecto a la misma
+    function entraEnCasilla(elem) {
+        if(estaLibre(elem)) elem.classList.add('lanzable');
+    }
+
+    // Al salir de una casilla, se elimina el posible efecto que tenga
+    function saleDeCasilla(elem) {
+        elem.classList.remove('lanzable');
+    }
+}
+
+
+// Coloca la ficha lanzada en la casilla
+function pulsar(casilla)  {
+
+    if (terminado === false) {
+        
+        if (estaLibre(casilla)) {
+            let fila = parseInt(casilla.id.charAt(3));
+            let columna = parseInt(casilla.id.charAt(4));
+
             casillero[fila][columna] = puntero;
             casilla.innerHTML = '<div id="ficha' + casilla.id.charAt(3) + casilla.id.charAt(4) + '" class="' + puntero + '"></div>';
 
@@ -258,10 +360,10 @@ function pulsar(casilla)  {
 }
 
 function partidaTerminada() {
-    // Detenemos el segundero de los turnos
+    // Detiene el segundero de los turnos
     clearInterval(contaTurno);
 
-    // Vaciamos los listeners de las fichas para que el usuario ya no pueda interactuar con ellas
+    // Vacia los listeners de las fichas
     fichaX.removeEventListener('mousedown', moverFicha);
     fichaO.removeEventListener('mousedown', moverFicha);
     fichaX.classList.remove('ficha--activa');
@@ -271,111 +373,68 @@ function partidaTerminada() {
     fichaX.style='';
     fichaO.style='';
 
+    // Guarda las estadisticas en LocalStorage
+
+
     // Mostramos el boton para acceder a la interfaz de resultados
     document.getElementById('btnResultados').style.visibility = 'visible';
 }
 
 
-/****************************** EVENTOS ***********************************/
+// Función que comprueba si en la última jugada se ha conseguido un tres en raya.
+function comprobarVictoria(puntero) {
 
-for (let casilla of casillas) {
-    casilla.addEventListener("click", function() {
-        pulsar(casilla);
-    });
-}
+    let resultados = 0;
+    let longitud = casillero[0].length; // Al abstraernos de la longitud, nos valdría con cualquiera, siempre que sea impar.
 
-function moverFicha(event) {
-    //console.log("Activado evento");
+    // Buscamos el nº de ocurrencias en cada fila, iteramos las filas y filtramos los valores para contar resultados.
+    for (let fila = 0; fila < longitud; fila++) {
+        for (let col = 0; col < longitud; col++)
+            // Transforma las posiciones bidimensionales a la numeración de las casillas.
+            jugadaGanadora[col] = ''+ fila + col;
 
-    let ficha = event.target;
-    if (ficha.classList.contains('cruz') || ficha.classList.contains('circulo')) {
-        ficha = ficha.parentElement;
-    }
-    // (1) prepare to moving: make absolute and on top by z-index
-    ficha.style.position = 'absolute';
-    ficha.style.zIndex = 1000;
+        // Filtra los valores de esa fila y cuenta las ocurrencias.
+        resultados = casillero[fila].filter((v) => (v === puntero)).length;
 
-    // move it out of any current parents directly into body
-    // to make it positioned relative to the body
-    //document.body.append(ficha);
-
-    // centers the ball at (pageX, pageY) coordinates
-    function moveAt(pageX, pageY) {
-        ficha.style.left = pageX - ficha.offsetWidth / 2 + 'px';
-        ficha.style.top = pageY - ficha.offsetHeight / 2 + 'px';
+        // Si son más de dos, existe un tres en raya en esta posición.
+        if (resultados > 2) return true;
     }
 
-    // move our absolutely positioned ball under the pointer
-    //moveAt(event.pageX, event.pageY);
+    // Para filtrar los valores de las columnas usamos map:
+    // https://stackoverflow.com/questions/7848004/get-column-from-a-two-dimensional-array
+    for (let col = 0; col < longitud; col++) {
+        for (let fila = 0; fila < longitud; fila++)
+            // Transforma las posiciones bidimensionales a la numeración de las casillas correlativas.
+            jugadaGanadora[fila] = ''+ fila + col;
 
-    function arrastraFicha(event) {
-        // Mueve la ficha con el ratón
-        moveAt(event.pageX, event.pageY);
-        
-        // Esconde y muestra la ficha para poder detectar casillas vacías debajo
-        ficha.style.display = 'none';
-        ficha.childNodes[0].hidden = true;
-        let elemBelow = document.elementFromPoint(event.clientX, event.clientY);
-        //console.log(elemBelow);
-        ficha.style.display = 'flex';
-        ficha.childNodes[0].hidden = false;
-
-        // Mousemove se puede disparar fuera de la ventana al arrastrar la ficha fuera de la pantalla
-        // Si clientX o clientY estan fuera de la ventana, elementFromPoint devuelve null
-        if (!elemBelow || tiempoTurno === 0) return;
-
-        // Las casillas donde se puede arrastrar tienen la clase "casilla"
-        droppableBelow = elemBelow.closest('.casilla');
-
-        if (currentDroppable != droppableBelow) {
-            // Estamos entrando o saliendo de una casilla
-            // Ambos valores pueden ser null
-            // currentDroppable será null si no estamos sobre una casilla antes de este evento
-            // droppableBelow será null si no estamos sobre una casilla ahora mismo durante este evento
-
-            if (currentDroppable) {
-                // En esta caso estaremos dejando una casilla, ejecutamos la funcion para eliminar el resaltado de la misma
-                leaveDroppable(currentDroppable);
-            }
-
-            currentDroppable = droppableBelow;
-            
-            if (currentDroppable) {
-                // Aqui estamos entrando en una casilla disponible, por lo que le aplicamos el resaltado
-                enterDroppable(currentDroppable);
-            }
-        }
+        resultados =  casillero.map((valor,indice) => valor[col]).filter((v) => (v === puntero)).length;
+        if (resultados > 2) return true;
     }
 
-    // La ficha se mueve con un mousemove que se escucha en document para que funcione todo el tiempo
-    document.addEventListener('mousemove', arrastraFicha);
+    // Los valores de las diagonales también se filtrarán con map:
+    // https://stackoverflow.com/questions/67168295/how-do-i-get-the-diagonal-values-in-an-array
 
-    // Se suelta la ficha, se elimina la escucha de mousemove.
-    function soltarFicha() {
-        if (currentDroppable) {
-            leaveDroppable(currentDroppable);
-            if (tiempoTurno != 0) pulsar(currentDroppable);
-        }
-        document.removeEventListener('mousemove', arrastraFicha);
-        ficha.style = "";
-    };
+    // Diagonal 1
+    for (let diag = 0; diag < longitud; diag++)
+        // Transforma las posiciones bidimensionales a la numeración de las casillas correlativas.
+        jugadaGanadora[diag] = '' + diag + diag;
 
-    ficha.addEventListener('mouseup', soltarFicha);
+    resultados =  casillero.map((valor, indice) => valor[indice]).filter((v) => (v === puntero)).length;
+    if (resultados > 2) return true;
+
+    // Diagonal 2
+    for (let diag = 0; diag < longitud; diag++) {
+        // Transforma las posiciones bidimensionales a la numeración de las casillas correlativas.
+        let col = (longitud - diag - 1);
+        jugadaGanadora[diag] = '' + diag + col;
+    }
+    // console.log('Diagonal 2: ', jugadaGanadora);
+
+    resultados =  [...casillero].reverse().map((valor, indice) => valor[indice]).filter((v) => (v === puntero)).length;
+    if (resultados > 2) return true;
+
+    return false;
 }
-
-function enterDroppable(elem) {
-    if(estaLibre(elem)) elem.classList.add('lanzable');
-}
-
-function leaveDroppable(elem) {
-    elem.classList.remove('lanzable');
-}
-
-
-
-
-var btnJugar = document.querySelector('#jugar');
-var btnSalir = document.querySelector('#salir');
 
 
 // Reinicia los valores y vacía el casillero

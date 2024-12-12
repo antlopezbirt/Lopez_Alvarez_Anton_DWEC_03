@@ -3,27 +3,29 @@
 /******* LOGIN ******/
 
 
-// ------------------------------ 1. VARIABLES GLOBALES ------------------------------
+/*************************** VARIABLES GLOBALES ***************************/
+
 let usuariosJSON = null;
 let usuariosJSONpath = '../data/usuarios.json';
 let usuariosObj = null;
 
-// ------------------------------ 2. CARGA INICIAL DE DATOS ------------------------------
-// Esto inicializa los eventos del formulario y carga los datos iniciales
+/************************** CARGA INICIAL DE DATOS ************************/
+
+// Inicializa los eventos del formulario y carga los datos de usuarios
 document.addEventListener('DOMContentLoaded', async () => {
+    // Vacia el localStorage preventivamente para no mezclar datos de sesiones anteriores
+    localStorage.clear();
+
     // Cargar los JSON cuando la página se carga, antes de cualquier interacción del usuario
     await cargarDatosUsuarios();
 
-    // mostrar datos en consola
-    // console.log('Hola, estos son los datos de los usuarios: ', usuariosJSON);
-
     usuariosObj = usuariosJSON;
-    //console.log(usuariosObj);
+
     // Inicializar eventos el formularios
     document.getElementById('frmLogin').addEventListener('submit', chequearUsuario);
 });
 
-// Función para cargar ambos ficheros JSON al cargar la página
+// Carga el fichero JSON de usuarios
 async function cargarDatosUsuarios() {
 
     try {
@@ -59,18 +61,10 @@ function chequearUsuario(event) {
         if (user === usu.usuario && pass === usu.contraseña) {
             document.getElementById('txtErrorLogin').classList.remove('visible');
             console.log("Usuario identificado: ", usu.usuario);
-            localStorage.setItem('userID', usu.id);
-            return true;
+            localStorage.setItem('userNum', i);
+            window.location.assign("bienvenida.html");
         }
     }
-
-    /*let spanErrorLogin = document.createElement("span");
-    spanErrorLogin.setAttribute("id", "txtErrorLogin");
-    spanErrorLogin.setAttribute("name", "txtErrorLogin");
-    let textoErrorLogin = document.createTextNode("Login incorrecto");
-    spanErrorLogin.appendChild(textoErrorLogin);
-
-    document.getElementById('mainEntrada').appendChild(spanErrorLogin);*/
 
     document.getElementById('txtErrorLogin').classList.add('visible');
 
