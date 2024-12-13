@@ -490,6 +490,6 @@ function partidaTerminada() {
     }
 
     // Espera un instante antes de redirigir a resultados para que dé tiempo a ver el final
-    setTimeout(function() { window.location.assign('resultados.html'); }, 1000);
+    setTimeout(function() { window.location.assign('resultados.html'); }, 2000);
 
 }

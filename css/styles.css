@@ -1,50 +1,51 @@
 :root {
-  --color-fondo: #242424;
   --color-azul: #0064FB;
-  --color-rojo: #FF3232;
-  --color-rojo-claro: #FFE5E5;
   --color-blanco: #fff;
-  --color-lanzable: #60a0ff;
-  --color-grisaceo: #aaa;
   --color-fondo-ficha: rgba(24, 24, 24, .5);
+  --color-fondo: #242424;
+  --color-grisaceo: #aaa;
+  --color-lanzable: #60a0ff;
+  --color-lanzable: #0064FB;
+  --color-rojo-claro: #FFE5E5;
+  --color-rojo: #FF3232;
 }
 
 /*---------- ELEMENTOS COMUNES ----------*/
 
 html {
-  box-sizing: border-box;
   background: var(--color-fondo);
-  font-size: 62.25%;
-  font-family: Roboto, 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  box-sizing: border-box;
   color: var(--color-blanco);
+  font-family: Roboto, 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 62.25%;
 }
 
 header {
-  text-align: center;
-  margin-top: 2rem;
   font-size: 2.4rem;
+  margin-top: 2rem;
+  text-align: center;
 }
 
 main {
-  margin-top: 2rem;
+  align-items: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
   font-size: 2.4rem;
   justify-content: center;
+  margin-top: 2rem;
   text-align: center;
 }
 
 p {
-  margin-block-start: 1rem;
   margin-block-end: 1rem;
+  margin-block-start: 1rem;
 }
 
 form {
-  margin-top: 5rem;
+  align-items: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  margin-top: 5rem;
 }
 
 fieldset {
@@ -54,20 +55,12 @@ fieldset {
 }
 
 input {
-  width: 33rem;
+  border-radius: 1rem;
+  font-size: 2.4rem;
   height: 5rem;
   margin-bottom: 3rem;
-  font-size: 2.4rem;
-  border-radius: 1rem;
   padding-left: 1rem;
-}
-
-input:-webkit-autofill::first-line,
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-  font-size: 2.4rem !important ;
+  width: 33rem;
 }
 
 button {
@@ -93,19 +86,19 @@ button:hover, .boton--seleccionado {
 /*---------- LOGIN ----------*/
 
 #txtOjo {
-  z-index: 1000;
   width: 0;
+  z-index: 1000;
 }
 
 #txtOjo::before {
-  display: inline-block;
-  content: '👁';
-  position: relative;
-  left: -4rem;
-  top: 1rem;
   color: var(--color-fondo);
-  position: relative;
+  content: '👁';
+  display: inline-block;
   font-size: 2.4rem;
+  left: -4rem;
+  position: relative;
+  position: relative;
+  top: 1rem;
 }
 
 #txtOjo:hover {
@@ -113,23 +106,23 @@ button:hover, .boton--seleccionado {
 }
 
 #btnEntrar {
-  width: 33rem;
   padding: 0;
+  width: 33rem;
 }
 
 #txtErrorLogin {
-  margin-top: 4rem;
-  margin-bottom: 4rem;
-  border: var(--color-rojo) solid .3rem;
-  border-radius: 1rem;
-  background-color: var(--color-rojo-claro);
-  color: var(--color-rojo);
-  font-size: 2.4rem;
-  width: 40rem;
-  height: 5rem;
   align-items: center;
-  justify-content: center;
+  background-color: var(--color-rojo-claro);
+  border-radius: 1rem;
+  border: var(--color-rojo) solid .3rem;
+  color: var(--color-rojo);
   display: flex;
+  font-size: 2.4rem;
+  height: 5rem;
+  justify-content: center;
+  margin-bottom: 4rem;
+  margin-top: 4rem;
+  width: 40rem;
 }
 
 .visible {
@@ -144,15 +137,15 @@ button:hover, .boton--seleccionado {
 }
 
 .botonizq {
-  border-right: 0;
   border-radius: 1rem 0 0 1rem;
+  border-right: 0;
   width: 17.5rem;
 }
 
 .botoncentro {
-  border-right: 0;
   border-left: 0;
   border-radius: 0;
+  border-right: 0;
   width: 17.5rem;
 }
 
@@ -167,17 +160,17 @@ button:hover, .boton--seleccionado {
 
 #contaJuego {
   position: absolute;
-  top: 2rem;
   right: 6rem;
+  top: 2rem;
 }
 
 /* AREA DE JUEGO */
 
 #rejillaJuego {
-  display: flex;
-  margin: 5rem 0 0;
-  justify-content: center;
   column-gap: 12.5rem;
+  display: flex;
+  justify-content: center;
+  margin: 5rem 0 0;
 }
 
 .zonaJugador {
@@ -187,8 +180,8 @@ button:hover, .boton--seleccionado {
 }
 
 .areaFichas  {
-  display: flex;
   align-items: center;
+  display: flex;
 }
 
 #areaFichasX {
@@ -201,15 +194,15 @@ button:hover, .boton--seleccionado {
 }
 
 .ficha {
-  border: .4rem solid var(--color-grisaceo);
-  border-radius: .8rem;
-  box-shadow: .4rem .4rem var(--color-grisaceo);
-  width: 10rem;
-  height: 10rem;
-  background-color: var(--color-fondo-ficha);
   align-items: center;
-  justify-content: center;
+  background-color: var(--color-fondo-ficha);
+  border-radius: .8rem;
+  border: .4rem solid var(--color-grisaceo);
+  box-shadow: .4rem .4rem var(--color-grisaceo);
   display: flex;
+  height: 10rem;
+  justify-content: center;
+  width: 10rem;
 }
 
 .ficha:hover {
@@ -224,23 +217,22 @@ button:hover, .boton--seleccionado {
 /* TABLERO */
 
 #casillero {
+  background-color: var(--color-blanco);
+  column-gap: 2rem;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  column-gap: 2rem;
-  row-gap: 2rem;
-  background-color: var(--color-blanco);
   justify-content: space-around;
   justify-items: center;
+  row-gap: 2rem;
 }
 
 .casilla {
-  display: flex;
-  width: 10rem;
-  height: 10rem;
   align-items: center;
-  justify-content: center;
   background-color: var(--color-fondo);
-  /* border: .5rem solid var(--color-fondo); */
+  display: flex;
+  height: 10rem;
+  justify-content: center;
+  width: 10rem;
 }
 
 .casilla--vacia {
@@ -301,6 +293,7 @@ button:hover, .boton--seleccionado {
   width: 7.5rem;
 }
 
+/* El segundo brazo de la cruz se dibuja con un pseudoelemento */
 .cruz:after {
   background: var(--color-blanco);
   border-radius: .4rem;
@@ -317,13 +310,15 @@ button:hover, .boton--seleccionado {
 las clases con otro nombre para cambiarle el color a las fichas ganadoras */
 
 .circulo--final {
+  animation: jugadaGanadora .5s ease infinite;
   border-radius: 100%;
   border: .8rem solid var(--color-azul);
   height: calc(7.5rem * cos(45deg));
-  width: calc(7.5rem * cos(45deg)); 
+  width: calc(7.5rem * cos(45deg));
 }
 
 .cruz--final {
+  animation: jugadaGanadora .5s ease infinite;
   background: var(--color-azul);
   border-radius: .4rem;
   border: .4rem solid var(--color-azul);
@@ -334,30 +329,49 @@ las clases con otro nombre para cambiarle el color a las fichas ganadoras */
 }
 
 .cruz--final:after {
-  content: "";
-  position: absolute;
-  width: 7.5rem;
-  height: 0;
-  border: .4rem solid var(--color-azul);
+  animation: jugadaGanadora .5s ease infinite;
   background: var(--color-azul);
   border-radius: .4rem;
+  border: .4rem solid var(--color-azul);
+  content: "";
+  height: 0;
+  position: absolute;
   rotate: 90deg;
   translate: -4.125rem -0.38rem;
+  width: 7.5rem;
+}
+
+/* La jugada ganadora se marca con una animacion */
+
+@keyframes jugadaGanadora {
+from {
+  background: var(--color-azul);
+  border-color: var(--color-azul);
+  
+}
+50% {
+  background: var(--color-fondo);
+  border-color: var(--color-fondo);
+}
+to {
+  background: var(--color-azul);
+  border-color: var(--color-azul);
+}
 }
 
 
 /* AREA DE INFORMACION */
 
 .areaInfo {
+  align-items:start;
   display: flex;
   width: 100%;
-  align-items:start;
 }
 
 .marcador {
-  width: 14rem;
   display: flex;
   flex-direction: column;
+  width: 14rem;
 }
 
 #areaInfoO {
@@ -365,9 +379,9 @@ las clases con otro nombre para cambiarle el color a las fichas ganadoras */
 }
 
 .contaTurno {
-  font-size: 6.4rem;
-  border: .4rem solid var(--color-blanco);
   border-bottom: 0;
+  border: .4rem solid var(--color-blanco);
+  font-size: 6.4rem;
   user-select: none;
 }
 
@@ -376,22 +390,22 @@ las clases con otro nombre para cambiarle el color a las fichas ganadoras */
 }
 
 .contaMovs {
-  font-size: 3rem;
   border: .4rem solid var(--color-blanco);
+  font-size: 3rem;
   user-select: none;
 }
 
 #resultado {
-  display: flex;
   align-items: end;
+  display: flex;
   justify-content: center;
   margin-bottom: 5rem;
 }
 
 #btnResultados {
+  margin: 4rem 0;
   visibility: hidden;
   width: 30rem;
-  margin: 4rem 0;
 }
 
 
@@ -424,6 +438,6 @@ las clases con otro nombre para cambiarle el color a las fichas ganadoras */
 
 #btnSalir:hover {
   background-color: var(--color-blanco);
-  color: var(--color-fondo);
   border-color: var(--color-blanco);
+  color: var(--color-fondo);
 }
