@@ -62,6 +62,14 @@ input {
   padding-left: 1rem;
 }
 
+input:-webkit-autofill::first-line,
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  font-size: 2.4rem !important ;
+}
+
 button {
   background-color: var(--color-fondo);
   border-radius: 1rem;
@@ -84,6 +92,26 @@ button:hover, .boton--seleccionado {
 
 /*---------- LOGIN ----------*/
 
+#txtOjo {
+  z-index: 1000;
+  width: 0;
+}
+
+#txtOjo::before {
+  display: inline-block;
+  content: '👁';
+  position: relative;
+  left: -4rem;
+  top: 1rem;
+  color: var(--color-fondo);
+  position: relative;
+  font-size: 2.4rem;
+}
+
+#txtOjo:hover {
+  cursor: pointer;
+}
+
 #btnEntrar {
   width: 33rem;
   padding: 0;
@@ -101,7 +129,7 @@ button:hover, .boton--seleccionado {
   height: 5rem;
   align-items: center;
   justify-content: center;
-  display: none;
+  display: flex;
 }
 
 .visible {
@@ -147,7 +175,6 @@ button:hover, .boton--seleccionado {
 
 #rejillaJuego {
   display: flex;
-  /* grid-template-columns: repeat(3, 1fr); */
   margin: 5rem 0 0;
   justify-content: center;
   column-gap: 12.5rem;
@@ -213,6 +240,16 @@ button:hover, .boton--seleccionado {
   align-items: center;
   justify-content: center;
   background-color: var(--color-fondo);
+  /* border: .5rem solid var(--color-fondo); */
+}
+
+.casilla--vacia {
+  box-shadow: inset 1rem 0 .2rem .2rem var(--color-fondo-ficha),
+              inset 0 1rem .2rem .2rem var(--color-fondo-ficha);
+}
+
+.casilla--ocupada {
+  border: .5rem solid var(--color-fondo-ficha);
 }
 
 .lanzable {
@@ -314,7 +351,7 @@ las clases con otro nombre para cambiarle el color a las fichas ganadoras */
 .areaInfo {
   display: flex;
   width: 100%;
-  align-items: top;
+  align-items:start;
 }
 
 .marcador {

@@ -8,7 +8,8 @@
 let nivel = 1;
 let modo = 1;
 let numUsuario = localStorage.getItem('userNum');
-// console.log(numUsuario, )
+// Si no hay usuario identificado, redirige al index.
+if (numUsuario === null) window.location.assign('../index.html');
 let nombreUsuario = JSON.parse(localStorage.getItem('user' + numUsuario)).nombre;
 
 // Registra los valores iniciales en Local Storage

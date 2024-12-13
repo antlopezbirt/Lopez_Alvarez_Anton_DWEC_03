@@ -4,23 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" type="text/css" href="css/styles.css">
+  <link rel="prefetch" href="media/img/logo.png">
   <title>Entrada</title>
 </head>
 <body>
   <header>
-    <img src="media/svg/logo.svg">
+    <img src="media/img/logo.png">
   </header>
 
   <main id="mainEntrada" name="mainEntrada">
     <form id="frmLogin" name="frmLogin">
       <input type="text" id="txtUsuario" name="txtUsuario" placeholder="usuario">
-      <input type="password" id="txtPass" name="txtPass" placeholder="contraseña">
+      <fieldset id="fldstPass">
+        <input type="password" id="txtPass" name="txtPass" placeholder="contraseña">
+      </fieldset>
       <button id="btnEntrar" name="btnEntrar">Entrar</button>
     </form>
-    <span id="txtErrorLogin" name="txtErrorLogin">Login incorrecto</span>
+    <!-- <span id="txtErrorLogin" name="txtErrorLogin">Login incorrecto</span> -->
   </main>
 
   </div>
-  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/login.js"></script>
 </body>
 </html>

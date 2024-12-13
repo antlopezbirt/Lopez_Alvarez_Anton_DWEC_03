@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" type="text/css" href="css/styles.css">
-  
+  <link rel="stylesheet" type="text/css" href="../css/styles.css">
+  <link rel="prefetch" href="../media/img/logo.png">  
   <title>Juego</title>
 </head>
 <body>
   <header>
-    <img src="media/svg/logo.svg">
+    <img src="../media/img/logo.png">
     <div id="contaJuego" name="contaJuego">Tiempo de juego: <span id="tiempoJuego" name="tiempoJuego">100</span>s</div>
   </header>
   <main id="mainJuego" name="mainJuego">
@@ -39,9 +39,17 @@
 
 
       <div id="casillero" name="casillero">
-        <div id="cas00" class="casilla"></div><div id="cas01" class="casilla"></div><div id="cas02" class="casilla"></div>
-        <div id="cas10" class="casilla"></div><div id="cas11" class="casilla"></div><div id="cas12" class="casilla"></div>
-        <div id="cas20" class="casilla"></div><div id="cas21" class="casilla"></div><div id="cas22" class="casilla"></div>
+        <div id="cas00" name="cas00" class="casilla casilla--vacia"><div id="ficha00" name="ficha00"></div></div>
+        <div id="cas01" name="cas01" class="casilla casilla--vacia"><div id="ficha01" name="ficha01"></div></div>
+        <div id="cas02" name="cas02" class="casilla casilla--vacia"><div id="ficha02" name="ficha02"></div></div>
+
+        <div id="cas10" name="cas10" class="casilla casilla--vacia"><div id="ficha10" name="ficha10"></div></div>
+        <div id="cas11" name="cas11" class="casilla casilla--vacia"><div id="ficha11" name="ficha11"></div></div>
+        <div id="cas12" name="cas12" class="casilla casilla--vacia"><div id="ficha12" name="ficha12"></div></div>
+
+        <div id="cas20" name="cas20" class="casilla casilla--vacia"><div id="ficha20" name="ficha20"></div></div>
+        <div id="cas21" name="cas21" class="casilla casilla--vacia"><div id="ficha21" name="ficha21"></div></div>
+        <div id="cas22" name="cas22" class="casilla casilla--vacia"><div id="ficha22" name="ficha22"></div></div>
       </div>
 
       <div id="zonaJugadorO" name="zonaJugadorO" class="zonaJugador">
@@ -70,6 +78,6 @@
 
   </main>
   
-  <script type="text/javascript" src="js/juego.js"></script>
+  <script type="text/javascript" src="../js/juego.js"></script>
 </body>
 </html>

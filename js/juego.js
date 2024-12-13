@@ -23,16 +23,16 @@ switch (nivel) {
     }
     case 1: {
         // Intermedio
-        tiempoTurno = 50;
+        tiempoTurno = 40;
         break;
     }
     case 2: {
         // Avanzado
-        tiempoTurno = 30;
+        tiempoTurno = 20;
         break;
     }
     default:
-        tiempoTurno = 50;
+        tiempoTurno = 40;
 }
 
 let tiempoTurnoActual = tiempoTurno -1; // Se pone un segundo menos aquí también para no repetir el que ya está pintado
@@ -53,8 +53,8 @@ let casillero = [
 //const casillas = document.querySelectorAll("div[id^='cas']");
 
 // Fichas
-const fichaX = document.getElementById('fichasX');
-const fichaO = document.getElementById('fichasO');
+let fichaX = document.getElementById('fichasX');
+let fichaO = document.getElementById('fichasO');
 
 // Si se pincha directamente en la figura de la ficha, se necesita acceder su elemento padre
 let padre = null;
@@ -88,11 +88,15 @@ let contaJuego = null; // Manejador del tiempo total de juego
 let movsX = 0; // Movimientos realizados por el jugador de las cruces
 let movsO = 0; // Movimientos realizados por el jugador de los círculos
 
+// Numero asignado a cada generación de fichas
+let numGenFicha = 0;
+
 // Variable que conserva la jugada ganadora para marcarla cuando se produzca
 let jugadaGanadora = [];
 
 // Evento que se dispara a discreción por el programa para forzar el soltado de la ficha cuando se agota el tiempo de turno
-const eventoSoltarRaton = new Event('mouseup', { bubbles: true, cancelable: false })
+const eventoSoltarRaton = new Event('mouseup', { bubbles: false, cancelable: false })
+const eventoClickRaton = new Event('click', { bubbles: false, cancelable: false })
 
 // Casilla sobre la que se encuentra la ficha previamente
 let casillaActual = null;
@@ -104,9 +108,9 @@ let casillaDebajo = null;
 /*********************** INICIALIZACIÓN DEL JUEGO ****************************/
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Registra los eventos de las fichas
-    fichaX.addEventListener('mousedown', moverFicha);
-    fichaO.addEventListener('mousedown', moverFicha);
+    // Registra los eventos de las fichas 
+    if (modo != 0) fichaX.addEventListener('mousedown', moverFicha);
+    if (modo === 2) fichaO.addEventListener('mousedown', moverFicha);
 
     // Si se descomenta se podrá jugar también pinchando en el tablero, al estilo clásico
     // for (let casilla of casillas) {
@@ -127,16 +131,73 @@ function temporizadorJuego() {
     txtTiempoJuego.innerText = tiempoJuego;
     tiempoJuego -= 1;
     if (tiempoJuego === -1) {
-        window.location.assign("index.html");
+        window.location.assign("../index.html");
     }
+}
+
+function reiniciarFichas() {
+
+    numGenFicha++;
+
+    fichaX.removeAttribute('style');
+    fichaO.removeAttribute('style');
+
+    if (modo != 0) fichaX.removeEventListener('mousedown', moverFicha);
+    if (modo === 2) fichaO.removeEventListener('mousedown', moverFicha);
+
+    // let nuevaFichaX = fichaX.cloneNode(true);
+    // let nuevaFichaO = fichaO.cloneNode(true);
+
+    fichaX.remove();
+    fichaO.remove();
+
+    let nuevaFichaX = document.createElement('div');
+    nuevaFichaX.setAttribute('id', 'fichasX' + numGenFicha);
+    nuevaFichaX.setAttribute('name', 'fichasX' + numGenFicha);
+    nuevaFichaX.setAttribute('class', 'ficha');
+    
+    let nuevaFichaXCont = document.createElement('div');
+    nuevaFichaXCont.setAttribute('id', 'fichaX');
+    nuevaFichaXCont.setAttribute('name', 'fichaX');
+    nuevaFichaXCont.setAttribute('class', 'cruz');
+
+    nuevaFichaX.appendChild(nuevaFichaXCont);
+    
+    document.getElementById('areaFichasX').appendChild(nuevaFichaX);
+
+    let nuevaFichaO = document.createElement('div');
+    nuevaFichaO.setAttribute('id', 'fichasO' + numGenFicha);
+    nuevaFichaO.setAttribute('name', 'fichasO' + numGenFicha);
+    nuevaFichaO.setAttribute('class', 'ficha');
+    
+    let nuevaFichaOCont = document.createElement('div');
+    nuevaFichaOCont.setAttribute('id', 'fichaO');
+    nuevaFichaOCont.setAttribute('name', 'fichaO');
+    nuevaFichaOCont.setAttribute('class', 'circulo');
+
+    nuevaFichaO.appendChild(nuevaFichaOCont);
+    
+    document.getElementById('areaFichasO').appendChild(nuevaFichaO);
+
+    fichaX = nuevaFichaX;
+    fichaO = nuevaFichaO;
+
+    if (modo != 0) fichaX.addEventListener('mousedown', moverFicha);
+    if (modo === 2) fichaO.addEventListener('mousedown', moverFicha);
+
+    // fichaX.removeEventListener('mousemove', arrastrarFicha);
+    // fichaX.removeEventListener('mouseup', soltarFicha);
+
 }
 
 // Cambia de turno
 function iniciarTurno() {
 
-    // Disparamos un evento mouseup en ambas fichas para forzar el soltado de la ficha anterior
-    fichaX.dispatchEvent(eventoSoltarRaton);
-    fichaO.dispatchEvent(eventoSoltarRaton);
+    // Reiniciamos las fichas para desechar posibles estados anteriores
+    // fichaX.removeAttribute('style'); //dispatchEvent(eventoSoltarRaton);
+    // // fichaO.dispatchEvent(eventoSoltarRaton);
+    // fichaO.removeAttribute('style');
+    reiniciarFichas();
 
     // Para el segundero actual y reinicia el tiempo para el nuevo turno
     clearInterval(contaTurno);
@@ -153,8 +214,10 @@ function iniciarTurno() {
             contaTurnoX.classList.remove('contaTurno--activo');
             txtTiempoTurnoX.innerText = '0';
 
-            fichaO.addEventListener('mousedown', moverFicha);
-            fichaO.classList.add('ficha--activa');
+            if (modo === 2) {
+                fichaO.addEventListener('mousedown', moverFicha);
+                fichaO.classList.add('ficha--activa');
+            }
             contaTurnoO.classList.add('contaTurno--activo');
             txtTiempoTurnoO.innerText = tiempoTurno / 10;
         } else {
@@ -164,8 +227,10 @@ function iniciarTurno() {
             contaTurnoO.classList.remove('contaTurno--activo');
             txtTiempoTurnoO.innerText = '0';
 
-            fichaX.addEventListener('mousedown', moverFicha);
-            fichaX.classList.add('ficha--activa');
+            if (modo != 0) {
+                fichaX.addEventListener('mousedown', moverFicha);
+                fichaX.classList.add('ficha--activa');
+            }
             contaTurnoX.classList.add('contaTurno--activo');
             txtTiempoTurnoX.innerText = tiempoTurno / 10;
         }
@@ -225,7 +290,7 @@ function posicionCasillero(casilla) {
 // Funcion que mueve a la ficha siguiendo al raton. Se activa al hacer mousedown sobre una ficha.
 // Tiene anidadas las funciones moverA, arrastrarFicha y soltarFicha, directamente ligadas al evento mousedown
 function moverFicha(event) {
-
+    
     // Detecta que ficha ha provocado el evento y la guarda para trabajar con ella.
     // Si se pincha sobre las lineas de la figura (cruz o circulo), se elige al elemento padre, que es la ficha
     let ficha = event.target;
@@ -233,10 +298,13 @@ function moverFicha(event) {
         ficha = ficha.parentElement;
     }
 
+    // console.log(ficha);
+    //ficha.dispatchEvent(eventoSoltarRaton);
+
     // Añade los registros de eventos correspondientes.
 
     // La ficha se mueve con un mousemove que se escucha en document para que funcione todo el tiempo
-    document.addEventListener('mousemove', arrastrarFicha);
+    ficha.addEventListener('mousemove', arrastrarFicha);
 
     // Si se hace mouseup en la ficha, se suelta la ficha
     ficha.addEventListener('mouseup', soltarFicha);
@@ -256,6 +324,13 @@ function moverFicha(event) {
 
     // Mueve la ficha adonde vaya el raton
     function arrastrarFicha(event) {
+
+        // Si se acaba el tiempo del turno, suelta la ficha y sale la funcion
+        if (tiempoTurnoActual === 0) {
+            soltarFicha();
+            return false;
+        }
+
         // Mueve la ficha con el ratón
         moverA(event.pageX, event.pageY);
         
@@ -298,24 +373,38 @@ function moverFicha(event) {
 
     // Se suelta la ficha, se elimina la escucha de mousemove.
     function soltarFicha() {
+
         if (casillaActual) {
             saleDeCasilla(casillaActual);
             if (tiempoTurnoActual != 0) pulsar(casillaActual);
-        }
-        document.removeEventListener('mousemove', arrastrarFicha);
-        // Se recoloca la ficha en su posicion original
-        ficha.style = '';
+        } 
+        
+        ficha.removeEventListener('mousemove', arrastrarFicha);
+        ficha.removeEventListener('mousedown', moverFicha);
+        ficha.removeEventListener('mouseup', soltarFicha);
+
+        reiniciarFichas();
     };
 
-    // Al entrar en una casilla libre, se aplica un efecto a la misma
-    function entraEnCasilla(elem) {
-        if(estaLibre(elem)) elem.classList.add('lanzable');
-    }
+}
 
-    // Al salir de una casilla, se elimina el posible efecto que tenga
-    function saleDeCasilla(elem) {
-        elem.classList.remove('lanzable');
-    }
+// function reponerFicha(ficha) {
+//     const nuevaFicha = ficha.cloneNode(true);
+//     ficha.remove();
+//     nuevaFicha.removeAttribute('style');
+//     if (ficha.id === 'fichasX') document.getElementById('areaFichasX').appendChild(nuevaFicha);
+//     else document.getElementById('areaFichasO').appendChild(nuevaFicha);
+    
+// }
+
+// Al entrar con la ficha en una casilla libre, se aplica un resaltado a la misma
+function entraEnCasilla(elem) {
+    if(estaLibre(elem)) elem.classList.add('lanzable');
+}
+
+// Al salir con la ficha de una casilla, se elimina el posible resaltado que tenga
+function saleDeCasilla(elem) {
+    elem.classList.remove('lanzable');
 }
 
 
@@ -331,7 +420,9 @@ function pulsar(casilla)  {
             casillero[fila][columna] = puntero;
 
             // Muestra la ficha (el puntero) en la casilla elegida
-            casilla.innerHTML = '<div id="ficha' + casilla.id.charAt(3) + casilla.id.charAt(4) + '" class="' + puntero + '"></div>';
+            casilla.classList.remove('casilla--vacia');
+            casilla.childNodes[0].classList.add(puntero);
+            // casilla.classList.add('casilla--ocupada');
 
             // Suena el efecto de sonido de la ficha
             audioFicha.play();
@@ -355,6 +446,7 @@ function pulsar(casilla)  {
                 }
 
                 partidaTerminada();
+                return true;
             }
 
             turno++;
@@ -364,13 +456,14 @@ function pulsar(casilla)  {
                 terminado = true;
                 empate = true;
                 partidaTerminada();
+                return true;
             }
 
             return true;
         }
         else return false;
     }
-    return false;
+    partidaTerminada();
 }
 
 // Función que comprueba si en la última jugada se ha conseguido un tres en raya.
@@ -431,6 +524,9 @@ function partidaTerminada() {
     // Detiene el segundero de los turnos
     clearInterval(contaTurno);
 
+    // Detiene el tiempo de juego
+    clearInterval(contaJuego);
+
     // Vacia los listeners de las fichas
     fichaX.removeEventListener('mousedown', moverFicha);
     fichaO.removeEventListener('mousedown', moverFicha);
@@ -458,8 +554,7 @@ function partidaTerminada() {
         localStorage.setItem('statMovs', movsO);
     }
 
-    // Espera un instante antes de redirigir a resultados para que el final no sea brusco
-    setTimeout(function() {
-        window.location.assign('resultados.html');
-    }, 1000);
+    // Espera un instante antes de redirigir a resultados para que dé tiempo a ver el final
+    setTimeout(function() { window.location.assign('resultados.html'); }, 1000);
+
 }

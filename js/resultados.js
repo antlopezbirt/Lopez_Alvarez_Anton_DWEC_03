@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Eventos en botones
     document.getElementById('btnSalir').addEventListener('click', function() {
-        window.location.assign('index.html');
+        window.location.assign('../index.html');
     });
 
     document.getElementById('btnJugar').addEventListener('click', function() {
