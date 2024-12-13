@@ -368,6 +368,7 @@ las clases con otro nombre para cambiarle el color a las fichas ganadoras */
   font-size: 6.4rem;
   border: .4rem solid var(--color-blanco);
   border-bottom: 0;
+  user-select: none;
 }
 
 .contaTurno--activo {
@@ -377,6 +378,7 @@ las clases con otro nombre para cambiarle el color a las fichas ganadoras */
 .contaMovs {
   font-size: 3rem;
   border: .4rem solid var(--color-blanco);
+  user-select: none;
 }
 
 #resultado {

@@ -8,6 +8,8 @@ let audioFicha = new Audio('../media/audio/ficha.mp3');
 let nivel = parseInt(localStorage.getItem('nivel'));
 let modo = parseInt(localStorage.getItem('modo'));
 
+console.log("Nivel: ", nivel, "Modo: ", modo);
+
 // El tiempo total de juego está fijado en 100 segundos
 // Se pone un segundo menos porque el 100 está ya pintado al inicio
 let tiempoJuego = 99;
@@ -53,8 +55,8 @@ let casillero = [
 //const casillas = document.querySelectorAll("div[id^='cas']");
 
 // Fichas
-let fichaX = document.getElementById('fichasX');
-let fichaO = document.getElementById('fichasO');
+const fichaX = document.getElementById('fichasX');
+const fichaO = document.getElementById('fichasO');
 
 // Si se pincha directamente en la figura de la ficha, se necesita acceder su elemento padre
 let padre = null;
@@ -88,21 +90,20 @@ let contaJuego = null; // Manejador del tiempo total de juego
 let movsX = 0; // Movimientos realizados por el jugador de las cruces
 let movsO = 0; // Movimientos realizados por el jugador de los círculos
 
-// Numero asignado a cada generación de fichas
-let numGenFicha = 0;
-
 // Variable que conserva la jugada ganadora para marcarla cuando se produzca
 let jugadaGanadora = [];
 
 // Evento que se dispara a discreción por el programa para forzar el soltado de la ficha cuando se agota el tiempo de turno
 const eventoSoltarRaton = new Event('mouseup', { bubbles: false, cancelable: false })
-const eventoClickRaton = new Event('click', { bubbles: false, cancelable: false })
+const eventoClick = new Event('click', { bubbles: false, cancelable: false })
 
 // Casilla sobre la que se encuentra la ficha previamente
 let casillaActual = null;
 
 // Casilla sobre la que se encuentra la ficha ahora
 let casillaDebajo = null;
+
+let arrastrarFicha = null;
 
 
 /*********************** INICIALIZACIÓN DEL JUEGO ****************************/
@@ -135,69 +136,14 @@ function temporizadorJuego() {
     }
 }
 
-function reiniciarFichas() {
-
-    numGenFicha++;
-
-    fichaX.removeAttribute('style');
-    fichaO.removeAttribute('style');
-
-    if (modo != 0) fichaX.removeEventListener('mousedown', moverFicha);
-    if (modo === 2) fichaO.removeEventListener('mousedown', moverFicha);
-
-    // let nuevaFichaX = fichaX.cloneNode(true);
-    // let nuevaFichaO = fichaO.cloneNode(true);
-
-    fichaX.remove();
-    fichaO.remove();
-
-    let nuevaFichaX = document.createElement('div');
-    nuevaFichaX.setAttribute('id', 'fichasX' + numGenFicha);
-    nuevaFichaX.setAttribute('name', 'fichasX' + numGenFicha);
-    nuevaFichaX.setAttribute('class', 'ficha');
-    
-    let nuevaFichaXCont = document.createElement('div');
-    nuevaFichaXCont.setAttribute('id', 'fichaX');
-    nuevaFichaXCont.setAttribute('name', 'fichaX');
-    nuevaFichaXCont.setAttribute('class', 'cruz');
-
-    nuevaFichaX.appendChild(nuevaFichaXCont);
-    
-    document.getElementById('areaFichasX').appendChild(nuevaFichaX);
-
-    let nuevaFichaO = document.createElement('div');
-    nuevaFichaO.setAttribute('id', 'fichasO' + numGenFicha);
-    nuevaFichaO.setAttribute('name', 'fichasO' + numGenFicha);
-    nuevaFichaO.setAttribute('class', 'ficha');
-    
-    let nuevaFichaOCont = document.createElement('div');
-    nuevaFichaOCont.setAttribute('id', 'fichaO');
-    nuevaFichaOCont.setAttribute('name', 'fichaO');
-    nuevaFichaOCont.setAttribute('class', 'circulo');
-
-    nuevaFichaO.appendChild(nuevaFichaOCont);
-    
-    document.getElementById('areaFichasO').appendChild(nuevaFichaO);
-
-    fichaX = nuevaFichaX;
-    fichaO = nuevaFichaO;
-
-    if (modo != 0) fichaX.addEventListener('mousedown', moverFicha);
-    if (modo === 2) fichaO.addEventListener('mousedown', moverFicha);
-
-    // fichaX.removeEventListener('mousemove', arrastrarFicha);
-    // fichaX.removeEventListener('mouseup', soltarFicha);
-
-}
-
 // Cambia de turno
 function iniciarTurno() {
 
-    // Reiniciamos las fichas para desechar posibles estados anteriores
-    // fichaX.removeAttribute('style'); //dispatchEvent(eventoSoltarRaton);
-    // // fichaO.dispatchEvent(eventoSoltarRaton);
-    // fichaO.removeAttribute('style');
-    reiniciarFichas();
+    // Disparamos un evento mouseup en ambas fichas para forzar el soltado de la ficha anterior
+    if (puntero === "cruz") fichaX.dispatchEvent(eventoSoltarRaton);
+    else fichaO.dispatchEvent(eventoSoltarRaton);
+
+    if (arrastrarFicha) document.removeEventListener('mousemove', arrastrarFicha);
 
     // Para el segundero actual y reinicia el tiempo para el nuevo turno
     clearInterval(contaTurno);
@@ -290,7 +236,12 @@ function posicionCasillero(casilla) {
 // Funcion que mueve a la ficha siguiendo al raton. Se activa al hacer mousedown sobre una ficha.
 // Tiene anidadas las funciones moverA, arrastrarFicha y soltarFicha, directamente ligadas al evento mousedown
 function moverFicha(event) {
-    
+    // Evita seleccionar elementos al pinchar y arrastrar para evitar bugs
+    event.preventDefault();
+
+    // Vaciamos posibles valores anteriores para evitar bugs
+    casillaActual = null;
+
     // Detecta que ficha ha provocado el evento y la guarda para trabajar con ella.
     // Si se pincha sobre las lineas de la figura (cruz o circulo), se elige al elemento padre, que es la ficha
     let ficha = event.target;
@@ -298,13 +249,11 @@ function moverFicha(event) {
         ficha = ficha.parentElement;
     }
 
-    // console.log(ficha);
-    //ficha.dispatchEvent(eventoSoltarRaton);
-
+    console.log(event);
     // Añade los registros de eventos correspondientes.
 
-    // La ficha se mueve con un mousemove que se escucha en document para que funcione todo el tiempo
-    ficha.addEventListener('mousemove', arrastrarFicha);
+    // La ficha se mueve con un mousemove
+    document.addEventListener('mousemove', arrastrarFicha);
 
     // Si se hace mouseup en la ficha, se suelta la ficha
     ficha.addEventListener('mouseup', soltarFicha);
@@ -312,6 +261,7 @@ function moverFicha(event) {
     // Prepara la ficha para moverla: le da posicion absoluta y la levanta en el eje Z
     ficha.style.position = 'absolute';
     ficha.style.zIndex = 1000;
+    
 
     // Hace un centrado inicial de la ficha en el puntero del raton
     moverA(event.pageX, event.pageY);
@@ -324,15 +274,12 @@ function moverFicha(event) {
 
     // Mueve la ficha adonde vaya el raton
     function arrastrarFicha(event) {
-
-        // Si se acaba el tiempo del turno, suelta la ficha y sale la funcion
-        if (tiempoTurnoActual === 0) {
-            soltarFicha();
-            return false;
-        }
+        console.log('Dentro de arrastrarFicha');
+        // Evita seleccionar elementos al pinchar y arrastrar para evitar bugs
+        event.preventDefault();
 
         // Mueve la ficha con el ratón
-        moverA(event.pageX, event.pageY);
+        if (tiempoTurnoActual > 1) moverA(event.pageX, event.pageY);
         
         // Al moverse, continuamente se esconde y se muestra la ficha para detectar si casillas vacías debajo
         ficha.style.display = 'none';
@@ -373,38 +320,26 @@ function moverFicha(event) {
 
     // Se suelta la ficha, se elimina la escucha de mousemove.
     function soltarFicha() {
-
         if (casillaActual) {
             saleDeCasilla(casillaActual);
+            ficha.removeEventListener('mousedown', moverFicha);
             if (tiempoTurnoActual != 0) pulsar(casillaActual);
-        } 
+        }
         
-        ficha.removeEventListener('mousemove', arrastrarFicha);
-        ficha.removeEventListener('mousedown', moverFicha);
-        ficha.removeEventListener('mouseup', soltarFicha);
-
-        reiniciarFichas();
+        //ficha.dispatchEvent(eventoSoltarRaton);
+        ficha.removeAttribute('style');
+        document.removeEventListener('mousemove', arrastrarFicha);
     };
 
-}
+    // Al entrar en una casilla libre, se aplica un efecto a la misma
+    function entraEnCasilla(elem) {
+        if(estaLibre(elem)) elem.classList.add('lanzable');
+    }
 
-// function reponerFicha(ficha) {
-//     const nuevaFicha = ficha.cloneNode(true);
-//     ficha.remove();
-//     nuevaFicha.removeAttribute('style');
-//     if (ficha.id === 'fichasX') document.getElementById('areaFichasX').appendChild(nuevaFicha);
-//     else document.getElementById('areaFichasO').appendChild(nuevaFicha);
-    
-// }
-
-// Al entrar con la ficha en una casilla libre, se aplica un resaltado a la misma
-function entraEnCasilla(elem) {
-    if(estaLibre(elem)) elem.classList.add('lanzable');
-}
-
-// Al salir con la ficha de una casilla, se elimina el posible resaltado que tenga
-function saleDeCasilla(elem) {
-    elem.classList.remove('lanzable');
+    // Al salir de una casilla, se elimina el posible efecto que tenga
+    function saleDeCasilla(elem) {
+        elem.classList.remove('lanzable');
+    }
 }
 
 
