@@ -3,8 +3,9 @@
   --color-blanco: #fff;
   --color-fondo-ficha: rgba(24, 24, 24, .5);
   --color-fondo: #242424;
+  --color-fondo: hsl(0, 0%, 16%);
   --color-grisaceo: #aaa;
-  --color-lanzable: #60a0ff;
+  --color-lanzable: hsl(216, 100%, 69%);
   --color-lanzable: #0064FB;
   --color-rojo-claro: #FFE5E5;
   --color-rojo: #FF3232;
@@ -164,6 +165,67 @@ button:hover, .boton--seleccionado {
   top: 2rem;
 }
 
+#lienzoJuego {
+  display: flex;
+  flex-direction: column;
+}
+
+#nombresJugadores {
+  display: flex;
+  font-size: 2.8rem;
+  justify-content: space-between;
+  padding: 0 1.4rem;
+}
+
+/* AREA DE INFORMACION */
+
+.areaInfo {
+  align-items:start;
+  display: flex;
+  width: 100%;
+}
+
+.marcador {
+  display: flex;
+  flex-direction: column;
+  width: 14rem;
+}
+
+#areaInfoO {
+  justify-content: right;
+}
+
+.contaTurno {
+  border-bottom: 0;
+  border: .4rem solid var(--color-blanco);
+  font-size: 6.4rem;
+  user-select: none;
+}
+
+.contaTurno--activo {
+  background-color: var(--color-rojo);
+}
+
+.contaMovs {
+  border: .4rem solid var(--color-blanco);
+  font-size: 3rem;
+  user-select: none;
+}
+
+#resultado {
+  align-items: end;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 5rem;
+}
+
+#btnResultados {
+  margin: 4rem 0;
+  visibility: hidden;
+  width: 30rem;
+}
+
+
 /* AREA DE JUEGO */
 
 #rejillaJuego {
@@ -310,7 +372,7 @@ button:hover, .boton--seleccionado {
 las clases con otro nombre para cambiarle el color a las fichas ganadoras */
 
 .circulo--final {
-  animation: jugadaGanadora .5s ease infinite;
+  animation: jugadaGanadoraCirculo .5s ease infinite;
   border-radius: 100%;
   border: .8rem solid var(--color-azul);
   height: calc(7.5rem * cos(45deg));
@@ -318,7 +380,7 @@ las clases con otro nombre para cambiarle el color a las fichas ganadoras */
 }
 
 .cruz--final {
-  animation: jugadaGanadora .5s ease infinite;
+  animation: jugadaGanadoraCruz .5s ease infinite;
   background: var(--color-azul);
   border-radius: .4rem;
   border: .4rem solid var(--color-azul);
@@ -329,7 +391,7 @@ las clases con otro nombre para cambiarle el color a las fichas ganadoras */
 }
 
 .cruz--final:after {
-  animation: jugadaGanadora .5s ease infinite;
+  animation: jugadaGanadoraCruz .5s ease infinite;
   background: var(--color-azul);
   border-radius: .4rem;
   border: .4rem solid var(--color-azul);
@@ -343,69 +405,31 @@ las clases con otro nombre para cambiarle el color a las fichas ganadoras */
 
 /* La jugada ganadora se marca con una animacion */
 
-@keyframes jugadaGanadora {
-from {
-  background: var(--color-azul);
-  border-color: var(--color-azul);
-  
-}
-50% {
-  background: var(--color-fondo);
-  border-color: var(--color-fondo);
-}
-to {
-  background: var(--color-azul);
-  border-color: var(--color-azul);
-}
+@keyframes jugadaGanadoraCirculo {
+  from {
+    border-color: var(--color-azul);
+  }
+  50% {
+    border-color: var(--color-fondo);
+  }
+  to {
+    border-color: var(--color-azul);
+  }
 }
 
-
-/* AREA DE INFORMACION */
-
-.areaInfo {
-  align-items:start;
-  display: flex;
-  width: 100%;
-}
-
-.marcador {
-  display: flex;
-  flex-direction: column;
-  width: 14rem;
-}
-
-#areaInfoO {
-  justify-content: right;
-}
-
-.contaTurno {
-  border-bottom: 0;
-  border: .4rem solid var(--color-blanco);
-  font-size: 6.4rem;
-  user-select: none;
-}
-
-.contaTurno--activo {
-  background-color: var(--color-rojo);
-}
-
-.contaMovs {
-  border: .4rem solid var(--color-blanco);
-  font-size: 3rem;
-  user-select: none;
-}
-
-#resultado {
-  align-items: end;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 5rem;
-}
-
-#btnResultados {
-  margin: 4rem 0;
-  visibility: hidden;
-  width: 30rem;
+@keyframes jugadaGanadoraCruz {
+  from {
+    background: var(--color-azul);
+    border-color: var(--color-azul);
+  }
+  50% {
+    background: var(--color-fondo);
+    border-color: var(--color-fondo);
+  }
+  to {
+    background: var(--color-azul);
+    border-color: var(--color-azul);
+  }
 }
 
 

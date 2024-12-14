@@ -10,6 +10,8 @@ let modo = parseInt(localStorage.getItem('modo'));
 
 console.log("Nivel: ", nivel, "Modo: ", modo);
 
+
+
 // El tiempo total de juego está fijado en 100 segundos
 // Se pone un segundo menos porque el 100 está ya pintado al inicio
 let tiempoJuego = 99;
@@ -37,12 +39,40 @@ switch (nivel) {
         tiempoTurno = 40;
 }
 
-let tiempoTurnoActual = tiempoTurno -1; // Se pone un segundo menos aquí también para no repetir el que ya está pintado
+let nombreJugadorX = null;
+let nombreJugadorO = null;
+
+// Asigna los nombres de los jugadores según el modo seleccionado
+switch (modo) {
+    case 0: {
+        // Maquina vs. Maquina
+        nombreJugadorX = 'Computer';
+        nombreJugadorO = 'Computer';
+        break;
+    }
+    case 1: {
+        // Jugador vs. Máquina
+        nombreJugadorX = 'Jugador 1';
+        nombreJugadorO = 'Computer';
+        break;
+    }
+    case 2: {
+        // Jugador vs. Jugador
+        nombreJugadorX = 'Jugador 1';
+        nombreJugadorO = 'Jugador 2';
+        break;
+    }
+    default:
+        nombreJugadorX = 'Jugador 1';
+        nombreJugadorO = 'Computer';
+}
+
+let tiempoTurnoActual = tiempoTurno -1; // Se pone un segundo menos aquí también para no repetir el que ya viene pintado
 
 // El puntero es el símbolo que hay que pintar en cada turno (cruz o círculo)
 let puntero = "";
 
-// Se podría haber hecho también con casillas de numeración correlativa, pero se ha hecho mediante una matriz
+// Se podría haber hecho también con casillas de numeración correlativa, pero se ha decidido hacer mediante una matriz
 let casillero = [
     [0, 0, 0],
     [0, 0, 0],
@@ -63,6 +93,10 @@ let padre = null;
 
 // Contador de tiempo general
 const txtTiempoJuego = document.getElementById('tiempoJuego');
+
+// Contadores que contienen los segunderos de turno y cambian de color
+const txtNombreJugador1 = document.getElementById('nombreJugadorX');
+const txtNombreJugador2 = document.getElementById('nombreJugadorO');
 
 // Contadores que contienen los segunderos de turno y cambian de color
 const contaTurnoX = document.getElementById('contaTurnoX');
@@ -119,6 +153,10 @@ document.addEventListener('DOMContentLoaded', () => {
     //         pulsar(casilla);
     //     });
     // }
+
+    // Pone los nombres de los jugadores
+    txtNombreJugador1.innerText = nombreJugadorX;
+    txtNombreJugador2.innerText = nombreJugadorO;
 
     // Se inicia el contador general y el primer turno
     contaJuego = setInterval(temporizadorJuego, 1000);
@@ -186,14 +224,38 @@ function iniciarTurno() {
 
         // Si estamos en el modo 0 solo juega la máquina, se disparan solos todos los turnos
         // Y si estamos en el modo 1, la computadora juega sola con el círculo
-        if (modo === 0 || (modo === 1 && puntero === "circulo")) {
-            setTimeout(function() {
+        if (modo === 0 || (modo === 1 && puntero === "circulo" && turno < 8)) {
+            setTimeout(async function() {
                 let seleccionFilaPC;
                 let seleccionColumnaPC;
                 do {
+                    fichaX.removeAttribute('style');
+                    fichaO.removeAttribute('style');
                     // El PC elige una fila y columna al azar
                     seleccionFilaPC = Math.floor(Math.random()*3);
                     seleccionColumnaPC = Math.floor(Math.random()*3);
+
+                    let casillaSorteada = document.getElementById('cas' + seleccionFilaPC + seleccionColumnaPC);
+                    let rect = casillaSorteada.getBoundingClientRect();
+                    console.log(rect.top, rect.right, rect.bottom, rect.left);
+                    if (puntero === "cruz") {
+                        
+                        fichaX.style.position = 'absolute';
+                        fichaX.style.zIndex = 1000;
+                        fichaX.style.left = rect.left - 10 + 'px';
+                        fichaX.style.top = rect.top - 10 + 'px';
+                        
+                    } else {
+                        
+                        fichaO.style.position = 'absolute';
+                        fichaO.style.zIndex = 1000;
+                        fichaO.style.left = rect.left + 10 + 'px';
+                        fichaO.style.top = rect.top - 10 + 'px';
+                    }
+                    // Fuerza una pequeña espera para que se pueda ver el movimiento de la máquina
+                    await new Promise(r => setTimeout(r, 100));
+                    fichaX.removeAttribute('style');
+                    fichaO.removeAttribute('style');
                 // Si esa casilla no esta libre, elige otra, así hasta que encuentre una libre y la pueda usar
                 } while (pulsar(document.getElementById('cas' + seleccionFilaPC + seleccionColumnaPC)) === false);
             }, 1000);
@@ -249,7 +311,6 @@ function moverFicha(event) {
         ficha = ficha.parentElement;
     }
 
-    console.log(event);
     // Añade los registros de eventos correspondientes.
 
     // La ficha se mueve con un mousemove
@@ -299,8 +360,8 @@ function moverFicha(event) {
         casillaDebajo = elemDebajo.closest('.casilla');
 
         if (casillaActual != casillaDebajo) {
-            // Estamos entrando o saliendo de una casilla
-            // Ambos valores pueden ser null
+            // Esta entrando o saliendo de una casilla
+            // Ambos valores pueden ser null:
             // casillaActual será null si no estamos sobre una casilla antes de este evento
             // casillaDebajo será null si no estamos sobre una casilla ahora mismo durante este evento
 
@@ -401,13 +462,13 @@ function pulsar(casilla)  {
     partidaTerminada();
 }
 
-// Función que comprueba si en la última jugada se ha conseguido un tres en raya.
+// Función que comprueba si se ha conseguido un tres en raya.
 function comprobarVictoria(puntero) {
 
     let resultados = 0;
-    let longitud = casillero[0].length; // Al abstraernos de la longitud, nos valdría con cualquiera, siempre que sea impar.
+    let longitud = casillero[0].length; // Se podría poner un tres. De este modo se deja la puerta abierta a crear un tablero de dimensiones variables.
 
-    // Buscamos el nº de ocurrencias en cada fila, iteramos las filas y filtramos los valores para contar resultados.
+    // Busca el nº de ocurrencias en cada fila, itera las filas y filtra los valores para contar resultados.
     for (let fila = 0; fila < longitud; fila++) {
         for (let col = 0; col < longitud; col++)
             // Transforma las posiciones bidimensionales a la numeración de las casillas.
@@ -454,8 +515,9 @@ function comprobarVictoria(puntero) {
     return false;
 }
 
-
+// Acciones a realizar cuando se ha terminado la partida
 function partidaTerminada() {
+
     // Detiene el segundero de los turnos
     clearInterval(contaTurno);
 
@@ -469,8 +531,8 @@ function partidaTerminada() {
     fichaO.classList.remove('ficha--activa');
     contaTurnoX.classList.remove('contaTurno--activo');
     contaTurnoO.classList.remove('contaTurno--activo');
-    fichaX.style='';
-    fichaO.style='';
+    fichaX.removeAttribute('style');
+    fichaO.removeAttribute('style');
 
     // Guarda las estadisticas en LocalStorage
 
@@ -491,5 +553,4 @@ function partidaTerminada() {
 
     // Espera un instante antes de redirigir a resultados para que dé tiempo a ver el final
     setTimeout(function() { window.location.assign('resultados.html'); }, 2000);
-
 }

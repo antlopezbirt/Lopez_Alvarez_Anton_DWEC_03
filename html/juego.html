@@ -13,69 +13,82 @@
     <div id="contaJuego" name="contaJuego">Tiempo de juego: <span id="tiempoJuego" name="tiempoJuego">100</span>s</div>
   </header>
   <main id="mainJuego" name="mainJuego">
-    
-    <!-- REJILLA DE JUEGO -->
 
-    <div id="rejillaJuego">
+    <div id="lienzoJuego" name="lienzoJuego">
+      <div id="nombresJugadores" name="nombresJugadores">
+        <div id="nombreJugadorX" name="nombreJugadorX"></div>
+        <div id="nombreJugadorO" name="nombreJugadorO"></div>
+      </div>
+      
+      <!-- REJILLA DE JUEGO -->
+      
 
-      <div id="zonaJugadorX" name="zonaJugadorX" class="zonaJugador">
+      <div id="rejillaJuego">
 
-        <!-- AREA DE INFORMACION JUGADOR X -->
-        <div id="areaInfoX" name="areaInfoX" class="areaInfo">
-          <div id="marcadorX" name="marcadorX" class="marcador">
-            <div id="contaTurnoX" name="contaTurnoX" class="contaTurno"></div>
-            <div id="contaMovsX" name="contaMovsX" class="contaMovs">0 mv</div>
-          </div>        
-        </div>
+        
 
-        <!-- FICHAS JUGADOR X -->
-        <div id="areaFichasX" name="areaFichasX" class="areaFichas">
-          <div id="fichasX" name="fichasX" class="ficha">
-            <div id="fichaX" name="fichaX" class="cruz"></div>
+        <div id="zonaJugadorX" name="zonaJugadorX" class="zonaJugador">
+
+          
+
+          <!-- AREA DE INFORMACION JUGADOR X -->
+          <div id="areaInfoX" name="areaInfoX" class="areaInfo">
+            <div id="marcadorX" name="marcadorX" class="marcador">
+              <div id="contaTurnoX" name="contaTurnoX" class="contaTurno"></div>
+              <div id="contaMovsX" name="contaMovsX" class="contaMovs">0 mv</div>
+            </div>        
           </div>
+
+          <!-- FICHAS JUGADOR X -->
+          <div id="areaFichasX" name="areaFichasX" class="areaFichas">
+            <div id="fichasX" name="fichasX" class="ficha">
+              <div id="fichaX" name="fichaX" class="cruz"></div>
+            </div>
+          </div>
+
         </div>
 
+
+        <div id="casillero" name="casillero">
+          <div id="cas00" name="cas00" class="casilla casilla--vacia"><div id="ficha00" name="ficha00"></div></div>
+          <div id="cas01" name="cas01" class="casilla casilla--vacia"><div id="ficha01" name="ficha01"></div></div>
+          <div id="cas02" name="cas02" class="casilla casilla--vacia"><div id="ficha02" name="ficha02"></div></div>
+
+          <div id="cas10" name="cas10" class="casilla casilla--vacia"><div id="ficha10" name="ficha10"></div></div>
+          <div id="cas11" name="cas11" class="casilla casilla--vacia"><div id="ficha11" name="ficha11"></div></div>
+          <div id="cas12" name="cas12" class="casilla casilla--vacia"><div id="ficha12" name="ficha12"></div></div>
+
+          <div id="cas20" name="cas20" class="casilla casilla--vacia"><div id="ficha20" name="ficha20"></div></div>
+          <div id="cas21" name="cas21" class="casilla casilla--vacia"><div id="ficha21" name="ficha21"></div></div>
+          <div id="cas22" name="cas22" class="casilla casilla--vacia"><div id="ficha22" name="ficha22"></div></div>
+        </div>
+
+        <div id="zonaJugadorO" name="zonaJugadorO" class="zonaJugador">
+
+          
+
+          <!-- AREA DE INFORMACION JUGADOR O-->
+          <div id="areaInfoO" name="areaInfoO" class="areaInfo">
+            <div id="marcadorO" name="marcadorO" class="marcador">
+              <div id="contaTurnoO" name="contaTurnoO" class="contaTurno"></div>
+              <div id="contaMovsO" name="contaMovsO" class="contaMovs">0 mv</div>
+            </div>
+          </div>
+
+          <!-- FICHAS JUGADOR O -->
+          <div id="areaFichasO" name="areaFichasO" class="areaFichas">
+            <div id="fichasO" class="ficha">
+              <div id="fichaO" name="fichaO" class="circulo"></div>
+            </div>
+          </div>
+
+        </div>
       </div>
 
-
-      <div id="casillero" name="casillero">
-        <div id="cas00" name="cas00" class="casilla casilla--vacia"><div id="ficha00" name="ficha00"></div></div>
-        <div id="cas01" name="cas01" class="casilla casilla--vacia"><div id="ficha01" name="ficha01"></div></div>
-        <div id="cas02" name="cas02" class="casilla casilla--vacia"><div id="ficha02" name="ficha02"></div></div>
-
-        <div id="cas10" name="cas10" class="casilla casilla--vacia"><div id="ficha10" name="ficha10"></div></div>
-        <div id="cas11" name="cas11" class="casilla casilla--vacia"><div id="ficha11" name="ficha11"></div></div>
-        <div id="cas12" name="cas12" class="casilla casilla--vacia"><div id="ficha12" name="ficha12"></div></div>
-
-        <div id="cas20" name="cas20" class="casilla casilla--vacia"><div id="ficha20" name="ficha20"></div></div>
-        <div id="cas21" name="cas21" class="casilla casilla--vacia"><div id="ficha21" name="ficha21"></div></div>
-        <div id="cas22" name="cas22" class="casilla casilla--vacia"><div id="ficha22" name="ficha22"></div></div>
-      </div>
-
-      <div id="zonaJugadorO" name="zonaJugadorO" class="zonaJugador">
-
-        <!-- AREA DE INFORMACION JUGADOR O-->
-        <div id="areaInfoO" name="areaInfoO" class="areaInfo">
-          <div id="marcadorO" name="marcadorO" class="marcador">
-            <div id="contaTurnoO" name="contaTurnoO" class="contaTurno"></div>
-            <div id="contaMovsO" name="contaMovsO" class="contaMovs">0 mv</div>
-          </div>
-        </div>
-
-        <!-- FICHAS JUGADOR O -->
-        <div id="areaFichasO" name="areaFichasO" class="areaFichas">
-          <div id="fichasO" class="ficha">
-            <div id="fichaO" name="fichaO" class="circulo"></div>
-          </div>
-        </div>
-
+      <div id="resultado">
+        <button id="btnResultados" name="btnResultados">Ver resultados</button>
       </div>
     </div>
-
-    <div id="resultado">
-      <button id="btnResultados" name="btnResultados">Ver resultados</button>
-    </div>
-
   </main>
   
   <script type="text/javascript" src="../js/juego.js"></script>
