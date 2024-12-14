@@ -8,9 +8,6 @@ let audioFicha = new Audio('../media/audio/ficha.mp3');
 let nivel = parseInt(localStorage.getItem('nivel'));
 let modo = parseInt(localStorage.getItem('modo'));
 
-console.log("Nivel: ", nivel, "Modo: ", modo);
-
-
 
 // El tiempo total de juego está fijado en 100 segundos
 // Se pone un segundo menos porque el 100 está ya pintado al inicio
@@ -225,21 +222,23 @@ function iniciarTurno() {
         // Si estamos en el modo 0 solo juega la máquina, se disparan solos todos los turnos
         // Y si estamos en el modo 1, la computadora juega sola con el círculo
         if (terminado === false && (modo === 0 || (modo === 1 && puntero === "circulo" && turno < 8))) {
-            console.log("Entrando, terminado = ", terminado);
-            console.log("Turno: ", turno);
+
             // Hace tantos intentos de buscar una casilla como el tiempo del turno se lo permita
             setTimeout(async function() {
                 let seleccionFilaPC;
                 let seleccionColumnaPC;
                 let intentos = 0;
-                let limiteIntentos = tiempoTurno - 1; // Deja un pequeño margen por si acaso
-                do {
-                    // El PC elige una fila y columna al azar
+                // Deja un pequeño margen para que no se pisen los turnos al ser una funcion async
+                let limiteIntentos = tiempoTurno - 15;
+                let casillaLibre = false;
+                let casillaSorteada  = null;
+                while (intentos < limiteIntentos && casillaLibre === false) {
+                    // El PC elige una fila y columna al azar, tiene cero inteligencia :-D
                     seleccionFilaPC = Math.floor(Math.random()*3);
                     seleccionColumnaPC = Math.floor(Math.random()*3);
                     
                     // Obtiene las coordenadas de la casilla sorteada
-                    let casillaSorteada = document.getElementById('cas' + seleccionFilaPC + seleccionColumnaPC);
+                    casillaSorteada = document.getElementById('cas' + seleccionFilaPC + seleccionColumnaPC);
                     let rect = casillaSorteada.getBoundingClientRect();
 
                     // Mueve la ficha sobre la casilla
@@ -264,11 +263,14 @@ function iniciarTurno() {
 
                     intentos++;
 
-                // Si esa casilla no esta libre, elige otra, así hasta que encuentre una libre y la pueda usar
-                } while (pulsar(document.getElementById('cas' + seleccionFilaPC + seleccionColumnaPC)) === false && intentos < limiteIntentos);
+                    casillaLibre = estaLibre(casillaSorteada);
+                }
+                
+                // Si está libre, se coloca la ficha definitivamente
+                pulsar(casillaSorteada);
+
             }, 1000);
         }
-        console.log("Saliendo, terminado = ", terminado);
     }
 }
 
