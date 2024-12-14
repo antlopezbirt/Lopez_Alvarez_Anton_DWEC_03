@@ -181,7 +181,7 @@ function iniciarTurno() {
     if (puntero === "cruz") fichaX.dispatchEvent(eventoSoltarRaton);
     else fichaO.dispatchEvent(eventoSoltarRaton);
 
-    if (arrastrarFicha) document.removeEventListener('mousemove', arrastrarFicha);
+    //if (arrastrarFicha) document.removeEventListener('mousemove', arrastrarFicha);
 
     // Para el segundero actual y reinicia el tiempo para el nuevo turno
     clearInterval(contaTurno);
@@ -224,29 +224,32 @@ function iniciarTurno() {
 
         // Si estamos en el modo 0 solo juega la máquina, se disparan solos todos los turnos
         // Y si estamos en el modo 1, la computadora juega sola con el círculo
-        if (modo === 0 || (modo === 1 && puntero === "circulo" && turno < 8)) {
+        if (terminado === false && (modo === 0 || (modo === 1 && puntero === "circulo" && turno < 8))) {
+            console.log("Entrando, terminado = ", terminado);
+            console.log("Turno: ", turno);
+            // Hace tantos intentos de buscar una casilla como el tiempo del turno se lo permita
             setTimeout(async function() {
                 let seleccionFilaPC;
                 let seleccionColumnaPC;
+                let intentos = 0;
+                let limiteIntentos = tiempoTurno - 1; // Deja un pequeño margen por si acaso
                 do {
-                    fichaX.removeAttribute('style');
-                    fichaO.removeAttribute('style');
                     // El PC elige una fila y columna al azar
                     seleccionFilaPC = Math.floor(Math.random()*3);
                     seleccionColumnaPC = Math.floor(Math.random()*3);
-
+                    
+                    // Obtiene las coordenadas de la casilla sorteada
                     let casillaSorteada = document.getElementById('cas' + seleccionFilaPC + seleccionColumnaPC);
                     let rect = casillaSorteada.getBoundingClientRect();
-                    console.log(rect.top, rect.right, rect.bottom, rect.left);
+
+                    // Mueve la ficha sobre la casilla
                     if (puntero === "cruz") {
-                        
                         fichaX.style.position = 'absolute';
                         fichaX.style.zIndex = 1000;
                         fichaX.style.left = rect.left - 10 + 'px';
                         fichaX.style.top = rect.top - 10 + 'px';
                         
                     } else {
-                        
                         fichaO.style.position = 'absolute';
                         fichaO.style.zIndex = 1000;
                         fichaO.style.left = rect.left + 10 + 'px';
@@ -254,12 +257,18 @@ function iniciarTurno() {
                     }
                     // Fuerza una pequeña espera para que se pueda ver el movimiento de la máquina
                     await new Promise(r => setTimeout(r, 100));
+
+                    // Las fichas vuelven a su sitio
                     fichaX.removeAttribute('style');
                     fichaO.removeAttribute('style');
+
+                    intentos++;
+
                 // Si esa casilla no esta libre, elige otra, así hasta que encuentre una libre y la pueda usar
-                } while (pulsar(document.getElementById('cas' + seleccionFilaPC + seleccionColumnaPC)) === false);
+                } while (pulsar(document.getElementById('cas' + seleccionFilaPC + seleccionColumnaPC)) === false && intentos < limiteIntentos);
             }, 1000);
         }
+        console.log("Saliendo, terminado = ", terminado);
     }
 }
 
@@ -335,7 +344,6 @@ function moverFicha(event) {
 
     // Mueve la ficha adonde vaya el raton
     function arrastrarFicha(event) {
-        console.log('Dentro de arrastrarFicha');
         // Evita seleccionar elementos al pinchar y arrastrar para evitar bugs
         event.preventDefault();
 
@@ -418,10 +426,12 @@ function pulsar(casilla)  {
             // Muestra la ficha (el puntero) en la casilla elegida
             casilla.classList.remove('casilla--vacia');
             casilla.childNodes[0].classList.add(puntero);
-            // casilla.classList.add('casilla--ocupada');
 
             // Suena el efecto de sonido de la ficha
             audioFicha.play();
+
+            // Se incrementa el numero de turno
+            turno++;
 
             if (puntero === 'cruz') {
                 movsX += 1;
@@ -432,9 +442,18 @@ function pulsar(casilla)  {
             }
 
             if (comprobarVictoria(puntero) === false) {
-                iniciarTurno();
+                // Si se han lanzado nueve fichas y no hay ganador, es un empate, y por tanto se termina la partida 
+                if (turno === 9) {
+                    terminado = true;
+                    empate = true;
+                    partidaTerminada();
+                    return true;
+
+                // En caso contrario, sigue jugando
+                } else iniciarTurno();
+
+            // Si hay victoria, tambien se acaba la partida
             } else {
-                // Ha terminado la partida
                 terminado = true;
                 // Marcamos las casillas de la jugada ganadora con la clase variante "--final", que le dara color
                 for (let id of jugadaGanadora) {
@@ -444,22 +463,12 @@ function pulsar(casilla)  {
                 partidaTerminada();
                 return true;
             }
-
-            turno++;
-
-            if (turno >= 9 && terminado === false) {
-                // Se han lanzado nueve fichas y no hay ganador, por tanto es un empate, y por tanto se termina la partida 
-                terminado = true;
-                empate = true;
-                partidaTerminada();
-                return true;
-            }
-
             return true;
         }
         else return false;
     }
     partidaTerminada();
+    return true;
 }
 
 // Función que comprueba si se ha conseguido un tres en raya.
