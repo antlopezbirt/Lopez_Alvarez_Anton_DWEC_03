@@ -5,16 +5,21 @@
 
 /*************************** VARIABLES GLOBALES ***************************/
 
+const usuario = JSON.parse(localStorage.getItem('usuarioIdentificado'));
+
+// Si no hay usuario identificado, redirige al index.
+if (usuario === null) window.location.assign('../index.html');
+
+// Obtiene el nombre del usuario para mostrarlo en el interfaz
+let nombreUsuario = usuario.nombre;
+
 let nivel = 1;
 let modo = 1;
-let numUsuario = localStorage.getItem('userNum');
-// Si no hay usuario identificado, redirige al index.
-if (numUsuario === null) window.location.assign('../index.html');
-let nombreUsuario = JSON.parse(localStorage.getItem('user' + numUsuario)).nombre;
 
 // Registra los valores iniciales en Local Storage
 localStorage.setItem('nivel', nivel);
 localStorage.setItem('modo', modo);
+
 
 /******************** EVENTOS Y FUNCIONES ********************/
 

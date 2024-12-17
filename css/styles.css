@@ -77,7 +77,7 @@ button {
   transition: .2s ease-in-out;
 }
 
-button:hover, .boton--seleccionado {
+button:not([disabled]):hover, .boton--seleccionado {
   background-color: var(--color-azul);
   border-color: var(--color-azul);
   cursor: pointer; 
@@ -109,6 +109,11 @@ button:hover, .boton--seleccionado {
 #btnEntrar {
   padding: 0;
   width: 33rem;
+}
+
+#btnEntrar:disabled {
+  background-color: var(--color-grisaceo);
+  color: var(--color-fondo)
 }
 
 #txtErrorLogin {

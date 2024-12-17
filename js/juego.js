@@ -1,5 +1,8 @@
 'use strict'
 
+/******* JUEGO ******/
+
+
 /*************************** VARIABLES GLOBALES ***************************/
 
 // Sonido de la ficha al caer en el casillero
