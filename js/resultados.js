@@ -2,6 +2,10 @@
 
 /******* RESULTADOS ******/
 
+// Si no hay ganador es que el usuario ha entrado a este interfaz directamente, redirige a login.
+if (localStorage.getItem('statGanador') === null) {
+    window.location.assign('bienvenida.html');
+}
 
 /*************************** VARIABLES GLOBALES ***************************/
 
@@ -28,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Muestra las estadísticas y mensajes de resultados
     switch (ganador) {
+        // Empate
         case -1: {
             txtResultTitle.innerText = '¡Ha habido un empate!';
             txtResultTitTiempo.innerText = 'A pesar de haber consumido...';
@@ -36,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
             txtResultMovs.innerText = movimientos;
             break;
         }
+        // Gana la cruz
         case 1: {
             if (modo === 1) txtResultTitle.innerText = '¡Has ganado!';
             else txtResultTitle.innerText = '¡Ha ganado la cruz!';
@@ -47,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
             txtResultMovs.innerText = movimientos;
             break;
         }
-            
+        // Gana el círculo
         case 2: {
             if (modo === 1) txtResultTitle.innerText = '¡Has perdido!';
             else txtResultTitle.innerText = '¡Ha ganado el círculo!';

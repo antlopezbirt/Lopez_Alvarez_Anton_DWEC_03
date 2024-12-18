@@ -2,22 +2,22 @@
 
 /******* JUEGO ******/
 
-
-/*************************** VARIABLES GLOBALES ***************************/
-
-// Sonido de la ficha al caer en el casillero
-const audioFicha = new Audio('../media/audio/ficha.mp3');
-
-audioFicha.muted = true;
-
 // Si no hay modo o nivel registrado, redirige a la bienvenida
-if (localStorage.getItem('nivel') === null|| localStorage.getItem('modo') === null) {
+if (localStorage.getItem('nivel') === null || localStorage.getItem('modo') === null) {
     alert('Modo o nivel sin seleccionar.\nRedirigiendo a la página de bienvenida...');
     window.location.assign('bienvenida.html');
 }
 
+
+/*************************** VARIABLES GLOBALES ***************************/
+
 const nivel = parseInt(localStorage.getItem('nivel'));
 const modo = parseInt(localStorage.getItem('modo'));
+
+
+// Sonido de la ficha al caer en el casillero, comienza muteado
+const audioFicha = new Audio('../media/audio/ficha.mp3');
+audioFicha.muted = true;
 
 
 // El tiempo total de juego está fijado en 100 segundos
