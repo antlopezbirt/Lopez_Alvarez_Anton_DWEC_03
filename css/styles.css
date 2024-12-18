@@ -89,6 +89,11 @@ button:not([disabled]):hover, .boton--seleccionado {
 
 /*---------- LOGIN ----------*/
 
+/* Impide que Edge muestre su propio ojo en el input de contraseña */
+input::-ms-reveal, input::-ms-clear {
+  display: none;
+}
+
 #txtOjo {
   width: 0;
   z-index: 1000;
@@ -169,6 +174,7 @@ button:not([disabled]):hover, .boton--seleccionado {
 
 #audio {
   font-size: 4rem;
+  padding: 0 2rem;
   position: absolute;
   top:1rem;
   transform: rotate(180deg);
@@ -176,11 +182,12 @@ button:not([disabled]):hover, .boton--seleccionado {
 }
 
 .muted {
-  left: 4rem;
+  left: 3rem;
 }
 
+/* Hay que corregir la posición para que no se mueva el icono al cambiar */
 .unmuted {
-  left: 3.8rem;  
+  left: 2.8rem;  
 }
 
 
