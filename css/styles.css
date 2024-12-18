@@ -2,8 +2,7 @@
   --color-azul: #0064FB;
   --color-blanco: #fff;
   --color-fondo-ficha: rgba(24, 24, 24, .5);
-  --color-fondo: #242424;
-  --color-fondo: hsl(0, 0%, 16%);
+  --color-fondo: hsl(0, 0%, 17%);
   --color-grisaceo: #aaa;
   --color-lanzable: hsl(216, 100%, 69%);
   --color-lanzable: #0064FB;
@@ -127,16 +126,16 @@ button:not([disabled]):hover, .boton--seleccionado {
   border: var(--color-rojo) solid .3rem;
   color: var(--color-rojo);
   display: flex;
-  font-size: 2.4rem;
+  font-size: 2rem;
   height: 5rem;
   justify-content: center;
   margin-bottom: 4rem;
   margin-top: 4rem;
-  width: 40rem;
+  padding: .5rem 2rem;
 }
 
-.visible {
-  display: flex;
+.invalido {
+  background-color: var(--color-rojo-claro);
 }
 
 
