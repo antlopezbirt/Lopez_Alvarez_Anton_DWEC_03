@@ -6,10 +6,18 @@
 /*************************** VARIABLES GLOBALES ***************************/
 
 // Sonido de la ficha al caer en el casillero
-let audioFicha = new Audio('../media/audio/ficha.mp3');
+const audioFicha = new Audio('../media/audio/ficha.mp3');
 
-let nivel = parseInt(localStorage.getItem('nivel'));
-let modo = parseInt(localStorage.getItem('modo'));
+audioFicha.muted = true;
+
+// Si no hay modo o nivel registrado, redirige a la bienvenida
+if (localStorage.getItem('nivel') === null|| localStorage.getItem('modo') === null) {
+    alert('Modo o nivel sin seleccionar.\nRedirigiendo a la página de bienvenida...');
+    window.location.assign('bienvenida.html');
+}
+
+const nivel = parseInt(localStorage.getItem('nivel'));
+const modo = parseInt(localStorage.getItem('modo'));
 
 
 // El tiempo total de juego está fijado en 100 segundos
@@ -84,6 +92,8 @@ let casillero = [
 // Descomentar si se quiere tener también la opción de jugar clicando en las casillas (modo clasico)
 //const casillas = document.querySelectorAll("div[id^='cas']");
 
+const audio = document.getElementById('audio');
+
 // Fichas
 const fichaX = document.getElementById('fichasX');
 const fichaO = document.getElementById('fichasO');
@@ -128,8 +138,7 @@ let movsO = 0; // Movimientos realizados por el jugador de los círculos
 let jugadaGanadora = [];
 
 // Evento que se dispara a discreción por el programa para forzar el soltado de la ficha cuando se agota el tiempo de turno
-const eventoSoltarRaton = new Event('mouseup', { bubbles: false, cancelable: false })
-const eventoClick = new Event('click', { bubbles: false, cancelable: false })
+const eventoSoltarRaton = new Event('mouseup', { bubbles: false, cancelable: false });
 
 // Casilla sobre la que se encuentra la ficha previamente
 let casillaActual = null;
@@ -143,6 +152,10 @@ let arrastrarFicha = null;
 /*********************** INICIALIZACIÓN DEL JUEGO ****************************/
 
 document.addEventListener('DOMContentLoaded', () => {
+
+    // El botón de audio hará sonar o muteará el sonido
+    audio.addEventListener('click', conmutarAudio);
+
     // Registra los eventos de las fichas 
     if (modo != 0) fichaX.addEventListener('mousedown', moverFicha);
     if (modo === 2) fichaO.addEventListener('mousedown', moverFicha);
@@ -160,8 +173,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Se inicia el contador general y el primer turno
     contaJuego = setInterval(temporizadorJuego, 1000);
+
     iniciarTurno();
 });
+
+// Función del audio
+function conmutarAudio() {
+    if(audio.getAttribute('value') === "muted") {
+        audio.setAttribute('value', 'unmuted');
+        audio.setAttribute('title', 'Desactivar sonido');
+        audio.innerText = "🕪";
+        audioFicha.muted = false;
+    } else {
+        audio.setAttribute('value', 'muted');
+        audio.setAttribute('title', 'Activar sonido');
+        audio.innerText = "🕨";
+        audioFicha.muted = true;
+    }
+}
 
 /*********************** CONTROL DE TIEMPO Y DE TURNOS ***********************/
 
@@ -169,6 +198,8 @@ document.addEventListener('DOMContentLoaded', () => {
 function temporizadorJuego() {
     txtTiempoJuego.innerText = tiempoJuego;
     tiempoJuego -= 1;
+
+    // Si el tiempo de juego se acaba, redirige a la interfaz de Login
     if (tiempoJuego === -1) {
         window.location.assign("../index.html");
     }
@@ -181,61 +212,46 @@ function iniciarTurno() {
     if (puntero === "cruz") fichaX.dispatchEvent(eventoSoltarRaton);
     else fichaO.dispatchEvent(eventoSoltarRaton);
 
-    //if (arrastrarFicha) document.removeEventListener('mousemove', arrastrarFicha);
-
-    // Para el segundero actual y reinicia el tiempo para el nuevo turno
+    // Detiene el segundero actual y reinicia el tiempo para el nuevo turno
     clearInterval(contaTurno);
     tiempoTurnoActual = (tiempoTurno - 1);
 
     // Si la partida no ha terminado, continua el siguiente turno
     if (terminado === false) {
 
-        // Vacia los listeners del turno anterior, reinicia valores y cambia el puntero
+        // Cambia el turo
         if (puntero === "cruz") {
             puntero = "circulo";
-            fichaX.removeEventListener('mousedown', moverFicha);
-            fichaX.classList.remove('ficha--activa');
-            contaTurnoX.classList.remove('contaTurno--activo');
-            txtTiempoTurnoX.innerText = '0';
-
-            if (modo === 2) {
-                fichaO.addEventListener('mousedown', moverFicha);
-                fichaO.classList.add('ficha--activa');
-            }
-            contaTurnoO.classList.add('contaTurno--activo');
-            txtTiempoTurnoO.innerText = tiempoTurno / 10;
+            cambioDeTurno(fichaX, contaTurnoX, txtTiempoTurnoX, fichaO, contaTurnoO, txtTiempoTurnoO);
+            
         } else {
             puntero = "cruz";
-            fichaO.removeEventListener('mousedown', moverFicha);
-            fichaO.classList.remove('ficha--activa');
-            contaTurnoO.classList.remove('contaTurno--activo');
-            txtTiempoTurnoO.innerText = '0';
-
-            if (modo != 0) {
-                fichaX.addEventListener('mousedown', moverFicha);
-                fichaX.classList.add('ficha--activa');
-            }
-            contaTurnoX.classList.add('contaTurno--activo');
-            txtTiempoTurnoX.innerText = tiempoTurno / 10;
+            cambioDeTurno(fichaO, contaTurnoO, txtTiempoTurnoO, fichaX, contaTurnoX, txtTiempoTurnoX);
         }
 
-        // Pone en marcha el segundero del nuevo turno
+        // Pone en marcha el segundero del nuevo turno, que actua cada 100 milésimas
         contaTurno = setInterval(temporizadorTurno, 100);
 
-        // Si estamos en el modo 0 solo juega la máquina, se disparan solos todos los turnos
-        // Y si estamos en el modo 1, la computadora juega sola con el círculo
+        // Si estamos en el modo 0 solo juega la máquina, se disparan solos todos los turnos.
+        // Y si estamos en el modo 1, la computadora juega sola con el círculo.
         if (terminado === false && (modo === 0 || (modo === 1 && puntero === "circulo" && turno < 8))) {
 
-            // Hace tantos intentos de buscar una casilla como el tiempo del turno se lo permita
+            /*
+                Pasado un segundo, emulando que la máquina está pensando, hace 
+                tantos intentos de buscar una casilla libre como el tiempo del 
+                turno se lo permita.
+            */
             setTimeout(async function() {
                 let seleccionFilaPC;
                 let seleccionColumnaPC;
                 let intentos = 0;
-                // Deja un pequeño margen para que no se pisen los turnos al ser una funcion async
+                // Deja un pequeño margen de aprox medio segundo para que no se pisen los turnos, al ser una funcion async
                 let limiteIntentos = tiempoTurno - 15;
                 let casillaLibre = false;
                 let casillaSorteada  = null;
+
                 while (intentos < limiteIntentos && casillaLibre === false) {
+
                     // El PC elige una fila y columna al azar, tiene cero inteligencia :-D
                     seleccionFilaPC = Math.floor(Math.random()*3);
                     seleccionColumnaPC = Math.floor(Math.random()*3);
@@ -245,19 +261,10 @@ function iniciarTurno() {
                     let rect = casillaSorteada.getBoundingClientRect();
 
                     // Mueve la ficha sobre la casilla
-                    if (puntero === "cruz") {
-                        fichaX.style.position = 'absolute';
-                        fichaX.style.zIndex = 1000;
-                        fichaX.style.left = rect.left - 10 + 'px';
-                        fichaX.style.top = rect.top - 10 + 'px';
-                        
-                    } else {
-                        fichaO.style.position = 'absolute';
-                        fichaO.style.zIndex = 1000;
-                        fichaO.style.left = rect.left + 10 + 'px';
-                        fichaO.style.top = rect.top - 10 + 'px';
-                    }
-                    // Fuerza una pequeña espera para que se pueda ver el movimiento de la máquina
+                    if (puntero === "cruz") mueveCasillaAuto(fichaX, rect, -10);
+                    else mueveCasillaAuto(fichaO, rect, 10);
+
+                    // Puramente estético. Fuerza una pequeña espera para que los movimientos de la máquina sean visibles
                     await new Promise(r => setTimeout(r, 100));
 
                     // Las fichas vuelven a su sitio
@@ -275,6 +282,32 @@ function iniciarTurno() {
             }, 1000);
         }
     }
+}
+
+// Operaciones de cambio de turno
+function cambioDeTurno(fichaPierdeTurno, contadorPierdeTurno, txtTiempoPierdeTurno, fichaRecibeTurno, contadorRecibeTurno, txtTiempoRecibeTurno) {
+
+    // Vacia los listeners, clases y tiempos del turno viejo y registra los del nuevo turno
+    fichaPierdeTurno.removeEventListener('mousedown', moverFicha);
+    fichaPierdeTurno.classList.remove('ficha--activa');
+    contadorPierdeTurno.classList.remove('contaTurno--activo');
+    txtTiempoPierdeTurno.innerText = '0';
+
+    if (modo === 2 && fichaRecibeTurno.id.includes('O') || modo > 0 && fichaRecibeTurno.id.includes('X')) {
+        fichaRecibeTurno.addEventListener('mousedown', moverFicha);
+        fichaRecibeTurno.classList.add('ficha--activa');
+    }
+
+    contadorRecibeTurno.classList.add('contaTurno--activo');
+    txtTiempoRecibeTurno.innerText = tiempoTurno / 10;
+}
+
+// Movimiento automatizado de la ficha a las coordenadas de la ficha elegida por el PC
+function mueveCasillaAuto(ficha, rect, offsetHorizontal) {
+    ficha.style.position = 'absolute';
+    ficha.style.zIndex = 1000;
+    ficha.style.left = rect.left + offsetHorizontal + 'px';
+    ficha.style.top = rect.top - 10 + 'px';
 }
 
 // Controla el curso del tiempo de cada turno
@@ -308,7 +341,6 @@ function posicionCasillero(casilla) {
     return casillero[fila][columna];
 }
 
-
 // Funcion que mueve a la ficha siguiendo al raton. Se activa al hacer mousedown sobre una ficha.
 // Tiene anidadas las funciones moverA, arrastrarFicha y soltarFicha, directamente ligadas al evento mousedown
 function moverFicha(event) {
@@ -337,14 +369,20 @@ function moverFicha(event) {
     ficha.style.position = 'absolute';
     ficha.style.zIndex = 1000;
     
+    // Registra la posición inicial de la ficha
+    let rect = ficha.getBoundingClientRect();
 
     // Hace un centrado inicial de la ficha en el puntero del raton
     moverA(event.pageX, event.pageY);
 
-    // Mueve la ficha a las coordenadas pageX y pageY del puntero del raton
+    // Mueve la ficha a las coordenadas del raton, si este se ha movido más de 20 pixeles (para no saturar)
     function moverA(pageX, pageY) {
-        ficha.style.left = pageX - ficha.offsetWidth / 2 + 'px';
-        ficha.style.top = pageY - ficha.offsetHeight / 2 + 'px';
+        if (Math.abs(pageX - rect.left) > 10 || Math.abs(pageY - rect.top) > 20) {
+            ficha.style.left = pageX - ficha.offsetWidth / 2 + 'px';
+            ficha.style.top = pageY - ficha.offsetHeight / 2 + 'px';
+
+            rect = ficha.getBoundingClientRect();
+        }
     }
 
     // Mueve la ficha adonde vaya el raton
@@ -353,7 +391,7 @@ function moverFicha(event) {
         event.preventDefault();
 
         // Mueve la ficha con el ratón
-        if (tiempoTurnoActual > 1) moverA(event.pageX, event.pageY);
+        moverA(event.pageX, event.pageY);
         
         // Al moverse, continuamente se esconde y se muestra la ficha para detectar si casillas vacías debajo
         ficha.style.display = 'none';
@@ -392,15 +430,15 @@ function moverFicha(event) {
         }
     }
 
-    // Se suelta la ficha, se elimina la escucha de mousemove.
+    // Se suelta la ficha, se elimina la escucha de mousemove y se quita el resalte si estaba sobre una casilla vacía.
     function soltarFicha() {
+
         if (casillaActual) {
             saleDeCasilla(casillaActual);
             ficha.removeEventListener('mousedown', moverFicha);
             if (tiempoTurnoActual != 0) pulsar(casillaActual);
         }
         
-        //ficha.dispatchEvent(eventoSoltarRaton);
         ficha.removeAttribute('style');
         document.removeEventListener('mousemove', arrastrarFicha);
     };

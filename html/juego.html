@@ -9,34 +9,32 @@
 </head>
 <body>
   <header>
+    <div id="audio" name="audio" value="muted" title="Activar sonido">🕨</div>
     <img src="../media/img/logo.png">
     <div id="contaJuego" name="contaJuego">Tiempo de juego: <span id="tiempoJuego" name="tiempoJuego">100</span>s</div>
   </header>
   <main id="mainJuego" name="mainJuego">
 
     <div id="lienzoJuego" name="lienzoJuego">
+
+      <!-- NOMBRES JUGADORES -->
       <div id="nombresJugadores" name="nombresJugadores">
         <div id="nombreJugadorX" name="nombreJugadorX"></div>
         <div id="nombreJugadorO" name="nombreJugadorO"></div>
       </div>
       
       <!-- REJILLA DE JUEGO -->
-      
 
       <div id="rejillaJuego">
 
-        
-
         <div id="zonaJugadorX" name="zonaJugadorX" class="zonaJugador">
-
-          
 
           <!-- AREA DE INFORMACION JUGADOR X -->
           <div id="areaInfoX" name="areaInfoX" class="areaInfo">
             <div id="marcadorX" name="marcadorX" class="marcador">
               <div id="contaTurnoX" name="contaTurnoX" class="contaTurno"></div>
               <div id="contaMovsX" name="contaMovsX" class="contaMovs">0 mv</div>
-            </div>        
+            </div>
           </div>
 
           <!-- FICHAS JUGADOR X -->
@@ -48,7 +46,7 @@
 
         </div>
 
-
+        <!-- CASILLERO -->
         <div id="casillero" name="casillero">
           <div id="cas00" name="cas00" class="casilla casilla--vacia"><div id="ficha00" name="ficha00"></div></div>
           <div id="cas01" name="cas01" class="casilla casilla--vacia"><div id="ficha01" name="ficha01"></div></div>
@@ -63,9 +61,8 @@
           <div id="cas22" name="cas22" class="casilla casilla--vacia"><div id="ficha22" name="ficha22"></div></div>
         </div>
 
-        <div id="zonaJugadorO" name="zonaJugadorO" class="zonaJugador">
 
-          
+        <div id="zonaJugadorO" name="zonaJugadorO" class="zonaJugador">
 
           <!-- AREA DE INFORMACION JUGADOR O-->
           <div id="areaInfoO" name="areaInfoO" class="areaInfo">

@@ -164,6 +164,7 @@ function chkMostrarOjo() {
     } else {
         // Si el campo de contraseña se vacía y el usuario pincha fuera, eliminamos el ojo y volvemos a tipo password
         if (document.getElementById('txtOjo') && document.activeElement != txtPass) {
+            
             // Elimina el ojo
             document.getElementById('txtOjo').remove();
 

@@ -164,6 +164,18 @@ button:not([disabled]):hover, .boton--seleccionado {
 
 /*---------- JUEGO ----------*/
 
+#audio {
+  left: 2rem;
+  position: absolute;
+  top: 1rem;
+  transform: rotate(180deg);
+  user-select: none;
+}
+
+#audio:hover {
+  cursor: pointer;
+}
+
 #contaJuego {
   position: absolute;
   right: 6rem;
