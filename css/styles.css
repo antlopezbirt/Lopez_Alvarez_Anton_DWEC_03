@@ -27,6 +27,10 @@ header {
   text-align: center;
 }
 
+header img {
+  user-select: none;
+}
+
 main {
   align-items: center;
   display: flex;
@@ -165,12 +169,22 @@ button:not([disabled]):hover, .boton--seleccionado {
 /*---------- JUEGO ----------*/
 
 #audio {
-  left: 2rem;
+  font-size: 4rem;
   position: absolute;
-  top: 1rem;
+  top:1rem;
   transform: rotate(180deg);
   user-select: none;
 }
+
+.muted {
+  left: 4rem;
+}
+
+.unmuted {
+  left: 3.8rem;  
+}
+
+
 
 #audio:hover {
   cursor: pointer;

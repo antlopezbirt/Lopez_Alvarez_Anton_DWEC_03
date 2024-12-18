@@ -8,10 +8,7 @@
 const usuario = JSON.parse(localStorage.getItem('usuarioIdentificado'));
 
 // Si no hay usuario identificado, redirige al index.
-if (usuario === null) {
-    alert('Usuario sin identificar.\nRedirigiendo a la página de entrada...');
-    window.location.assign('../index.html');
-}
+if (usuario === null) window.location.assign('../index.html');
 
 // Obtiene el nombre del usuario para mostrarlo en el interfaz
 const nombreUsuario = usuario.nombre;

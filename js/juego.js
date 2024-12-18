@@ -17,7 +17,9 @@ const modo = parseInt(localStorage.getItem('modo'));
 
 // Sonido de la ficha al caer en el casillero, comienza muteado
 const audioFicha = new Audio('../media/audio/ficha.mp3');
-audioFicha.muted = true;
+
+// Si existe registro de la opcion de mutear audio la aplica (si no existe, se mutea tambien al cargar el DOM)
+audioFicha.muted = localStorage.getItem('muted') === 'false' ? true : false;
 
 
 // El tiempo total de juego está fijado en 100 segundos
@@ -174,21 +176,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // Se inicia el contador general y el primer turno
     contaJuego = setInterval(temporizadorJuego, 1000);
 
+    conmutarAudio();
+
     iniciarTurno();
 });
 
-// Función del audio
+// Función de activar o desactivar el audio de las fichas
 function conmutarAudio() {
-    if(audio.getAttribute('value') === "muted") {
-        audio.setAttribute('value', 'unmuted');
+    audioFicha.muted = !audioFicha.muted;
+
+    if(audioFicha.muted === false) {
+        audio.classList.replace('muted', 'unmuted');
         audio.setAttribute('title', 'Desactivar sonido');
         audio.innerText = "🕪";
-        audioFicha.muted = false;
+        localStorage.setItem('muted', 'false');
     } else {
-        audio.setAttribute('value', 'muted');
+        audio.classList.replace('unmuted', 'muted');
         audio.setAttribute('title', 'Activar sonido');
         audio.innerText = "🕨";
-        audioFicha.muted = true;
+        localStorage.setItem('muted', 'true');
     }
 }
 

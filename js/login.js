@@ -29,14 +29,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     btnEntrar.disabled = true;
     
-    txtUsuario.addEventListener('input', chkBotonEntrar);
-    txtPass.addEventListener('input', chkBotonEntrar);
+    txtUsuario.addEventListener('input', chequearBotonEntrar);
+    txtPass.addEventListener('input', chequearBotonEntrar);
 
-    txtPass.addEventListener('focus', chkMostrarOjo);
-    txtPass.addEventListener('blur', chkMostrarOjo);
-    txtPass.addEventListener('input', chkMostrarOjo);
+    txtPass.addEventListener('focus', chequearMostrarOjo);
+    txtPass.addEventListener('blur', chequearMostrarOjo);
+    txtPass.addEventListener('input', chequearMostrarOjo);
 
     btnEntrar.addEventListener('click', chequearUsuario);
+
+    // El navegador puede rellenar automáticamante los datos de usuario, comprueba si hay que mostrar el ojo
+    chequearMostrarOjo();
+    chequearBotonEntrar();
 });
 
 // Carga el fichero JSON de usuarios
@@ -64,7 +68,7 @@ async function cargarJSON(path) {
 }
 
 // Si el campo de usuario o el de contraseña están vacíos, se inhabilita el botón
-function chkBotonEntrar() {
+function chequearBotonEntrar() {
     const usuario = txtUsuario.value;
     const pass = txtPass.value;
     
@@ -119,8 +123,6 @@ function chequearUsuario(event) {
 // Muestra un error de login según el tipo que sea
 function mostrarErrorLogin(tipo) {
 
-    
-
     // Crea los elementos necesarios para mostrar el error
     spanErrorLogin = document.createElement("span");
     spanErrorLogin.setAttribute("id", "txtErrorLogin");
@@ -141,7 +143,7 @@ function eliminarErrorLogin() {
 
 
 // Comprueba si debe mostrar el ojo del campo de contraseña o no, y lo hace
-function chkMostrarOjo() {
+function chequearMostrarOjo() {
     let fieldsetPass= document.getElementById('fldstPass');
     let spanOjo = null;
 
